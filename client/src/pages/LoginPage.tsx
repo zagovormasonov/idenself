@@ -24,7 +24,7 @@ export const LoginPage: React.FC = () => {
   return (
     <div className="flex justify-center items-center h-full">
       <div className="bg-white/5 backdrop-blur-md p-8 rounded-2xl border border-white/10 w-full max-w-md">
-        <h2 className="text-3xl font-bold mb-8 text-center bg-gradient-brand bg-clip-text text-transparent">С возвращением</h2>
+        <h2 className="text-3xl font-bold mb-8 text-center text-white">С возвращением</h2>
         {error && <div className="bg-red-500/10 border border-red-500/50 text-red-200 p-3 rounded-lg mb-4 text-sm">{error}</div>}
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
@@ -47,7 +47,7 @@ export const LoginPage: React.FC = () => {
               required
             />
           </div>
-          <button type="submit" className="w-full bg-gradient-brand text-navy p-3 rounded-lg font-semibold hover:shadow-lg hover:shadow-primary/50 transition-all transform hover:scale-[1.02]">
+          <button type="submit" className="w-full bg-white text-navy p-3 rounded-lg font-semibold hover:shadow-lg hover:shadow-white/50 transition-all transform hover:scale-[1.02]">
             Войти
           </button>
         </form>

@@ -14,7 +14,7 @@ export const Layout: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-navy-dark via-navy to-navy-light">
       <header className="bg-navy/50 backdrop-blur-sm border-b border-white/10 p-4 flex justify-between items-center z-10">
-        <Link to="/" className="text-2xl font-bold bg-gradient-brand bg-clip-text text-transparent tracking-tight">IdenSelf</Link>
+        <Link to="/" className="text-2xl font-bold text-white tracking-tight">IdenSelf</Link>
         <nav>
             {user ? (
                 <div className="flex items-center gap-6">
@@ -24,7 +24,7 @@ export const Layout: React.FC = () => {
             ) : (
                 <div className="flex items-center gap-6">
                      <Link to="/login" className="text-sm font-medium text-white/80 hover:text-white transition-colors">Войти</Link>
-                     <Link to="/register" className="px-4 py-2 bg-gradient-brand text-navy font-semibold rounded-lg text-sm hover:shadow-lg hover:shadow-primary/50 transition-all">Начать</Link>
+                     <Link to="/register" className="px-4 py-2 bg-white text-navy font-semibold rounded-lg text-sm hover:shadow-lg hover:shadow-white/50 transition-all">Начать</Link>
                 </div>
             )}
         </nav>

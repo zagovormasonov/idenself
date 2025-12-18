@@ -11,12 +11,12 @@ import { ResultsPage } from './pages/ResultsPage';
 // Placeholder for other pages
 const HomePage = () => (
   <div className="text-center py-20">
-    <h2 className="text-5xl font-bold mb-6 bg-gradient-brand bg-clip-text text-transparent leading-tight">Ваш путь к себе начинается здесь</h2>
+    <h2 className="text-5xl font-bold mb-6 text-white leading-tight">Ваш путь к себе начинается здесь</h2>
     <p className="text-xl text-white/80 mb-12 max-w-2xl mx-auto leading-relaxed">
       Профессиональная оценка с использованием ИИ поможет вам лучше понять себя
     </p>
     <div className="flex justify-center mb-16">
-        <a href="/complaint" className="bg-gradient-brand text-navy px-10 py-4 rounded-xl text-lg font-semibold hover:shadow-2xl hover:shadow-primary/50 transition-all transform hover:scale-105">Начать оценку</a>
+        <a href="/complaint" className="bg-white text-navy px-10 py-4 rounded-xl text-lg font-semibold hover:shadow-2xl hover:shadow-white/50 transition-all transform hover:scale-105">Начать оценку</a>
     </div>
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left mt-12">
         <div className="p-8 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:bg-white/10 transition-all">

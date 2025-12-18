@@ -22,7 +22,7 @@ export const ComplaintPage: React.FC = () => {
 
   return (
     <div className="max-w-3xl mx-auto py-12">
-      <h2 className="text-4xl font-bold mb-6 bg-gradient-brand bg-clip-text text-transparent">Как вы себя чувствуете?</h2>
+      <h2 className="text-4xl font-bold mb-6 text-white">Как вы себя чувствуете?</h2>
       <p className="mb-8 text-white/80 text-lg leading-relaxed">
         Опишите своими словами жалобы, симптомы или то, что вас беспокоит. Чем больше деталей вы предоставите, тем лучше мы сможем вам помочь.
       </p>
@@ -36,7 +36,7 @@ export const ComplaintPage: React.FC = () => {
         <button
           onClick={handleSubmit}
           disabled={loading || !complaint.trim()}
-          className="bg-gradient-brand text-navy px-10 py-4 rounded-xl text-lg font-semibold hover:shadow-2xl hover:shadow-primary/50 transition-all disabled:opacity-50 disabled:hover:shadow-none transform hover:scale-105 disabled:hover:scale-100"
+          className="bg-white text-navy px-10 py-4 rounded-xl text-lg font-semibold hover:shadow-2xl hover:shadow-white/50 transition-all disabled:opacity-50 disabled:hover:shadow-none transform hover:scale-105 disabled:hover:scale-100"
         >
           {loading ? 'Анализирую...' : 'Начать оценку'}
         </button>
