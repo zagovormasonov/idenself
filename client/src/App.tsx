@@ -20,15 +20,15 @@ const HomePage = () => (
     </div>
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left mt-12">
         <div className="p-8 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:bg-white/10 transition-all">
-            <h3 className="font-semibold text-xl mb-3 bg-gradient-brand bg-clip-text text-transparent">Опишите</h3>
+            <h3 className="font-semibold text-xl mb-3 text-white">Опишите</h3>
             <p className="text-white/70 leading-relaxed">Расскажите о своих жалобах своими словами</p>
         </div>
         <div className="p-8 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:bg-white/10 transition-all">
-            <h3 className="font-semibold text-xl mb-3 bg-gradient-brand bg-clip-text text-transparent">Оцените</h3>
+            <h3 className="font-semibold text-xl mb-3 text-white">Оцените</h3>
             <p className="text-white/70 leading-relaxed">Ответьте на динамические вопросы, созданные специально для вас</p>
         </div>
         <div className="p-8 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:bg-white/10 transition-all">
-            <h3 className="font-semibold text-xl mb-3 bg-gradient-brand bg-clip-text text-transparent">Поймите</h3>
+            <h3 className="font-semibold text-xl mb-3 text-white">Поймите</h3>
             <p className="text-white/70 leading-relaxed">Получите детальный личный план и профессиональное руководство</p>
         </div>
     </div>

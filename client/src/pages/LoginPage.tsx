@@ -52,7 +52,7 @@ export const LoginPage: React.FC = () => {
           </button>
         </form>
         <p className="mt-6 text-center text-sm text-white/60">
-          Нет аккаунта? <Link to="/register" className="bg-gradient-brand bg-clip-text text-transparent font-semibold hover:underline">Зарегистрироваться</Link>
+          Нет аккаунта? <Link to="/register" className="text-white font-semibold hover:underline">Зарегистрироваться</Link>
         </p>
       </div>
     </div>

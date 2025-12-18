@@ -55,7 +55,7 @@ export const RegisterPage: React.FC = () => {
           </button>
         </form>
          <p className="mt-6 text-center text-sm text-white/60">
-          Уже есть аккаунт? <Link to="/login" className="bg-gradient-brand bg-clip-text text-transparent font-semibold hover:underline">Войти</Link>
+          Уже есть аккаунт? <Link to="/login" className="text-white font-semibold hover:underline">Войти</Link>
         </p>
       </div>
     </div>
