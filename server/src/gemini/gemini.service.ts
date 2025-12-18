@@ -45,24 +45,24 @@ export class GeminiService {
     return [
       {
         id: 'q1',
-        text: 'You mentioned feeling overwhelmed. Can you describe a specific recent situation where this feeling was most intense?',
+        text: 'Вы упомянули о чувстве подавленности. Можете ли вы описать конкретную недавнюю ситуацию, когда это чувство было наиболее интенсивным?',
         type: 'text'
       },
       {
         id: 'q2',
-        text: 'How does your sleep quality correlate with these feelings?',
+        text: 'Как качество вашего сна связано с этими чувствами?',
         type: 'choice',
-        options: ['Worse sleep makes it worse', 'No relation', 'I sleep too much']
+        options: ['Плохой сон усугубляет ситуацию', 'Нет связи', 'Я сплю слишком много']
       },
       {
         id: 'c1',
-        text: 'On a scale of 1-10, how would you rate your overall energy levels today?',
-        type: 'scale', // treated as text or number
+        text: 'По шкале от 1 до 10, как бы вы оценили свой общий уровень энергии сегодня?',
+        type: 'scale',
         isConstant: true
       },
       {
         id: 'c2',
-        text: 'Have you experienced any changes in appetite recently?',
+        text: 'Замечали ли вы какие-либо изменения в аппетите в последнее время?',
         type: 'text',
         isConstant: true
       }
@@ -73,14 +73,14 @@ export class GeminiService {
     return [
       {
         id: 'q3',
-        text: 'Based on your sleep issues, do you have trouble falling asleep or staying asleep?',
+        text: 'Учитывая проблемы со сном, у вас проблемы с засыпанием или с поддержанием сна?',
         type: 'text'
       },
       {
         id: 'q4',
-        text: 'Do you feel these symptoms are affecting your work or relationships?',
+        text: 'Чувствуете ли вы, что эти симптомы влияют на вашу работу или отношения?',
         type: 'choice',
-        options: ['Yes, significantly', 'Somewhat', 'No']
+        options: ['Да, значительно', 'В некоторой степени', 'Нет']
       }
     ];
   }
@@ -88,53 +88,53 @@ export class GeminiService {
   private getMockResults() {
     return {
       personalPlan: `
-# Personal Mental Health Plan
+# Личный план ментального здоровья
 
-Based on your complaints about feeling overwhelmed and sleep issues, here is a tailored plan.
+На основе ваших жалоб о чувстве подавленности и проблемах со сном, вот индивидуальный план.
 
-## 1. Immediate Actions
-- **Sleep Hygiene**: Establish a fixed sleep schedule. Avoid screens 1 hour before bed.
-- **Mindfulness**: Try 5 minutes of box breathing when feeling overwhelmed.
+## 1. Немедленные действия
+- **Гигиена сна**: Установите фиксированный режим сна. Избегайте экранов за 1 час до сна.
+- **Осознанность**: Попробуйте 5 минут коробочного дыхания при чувстве подавленности.
 
-## 2. Lifestyle Adjustments
-- Reduce caffeine intake after 12 PM.
-- Incorporate a 20-minute daily walk.
+## 2. Корректировка образа жизни
+- Снизьте потребление кофеина после 12 дня.
+- Включите 20-минутную ежедневную прогулку.
 
-## 3. Long-term Goals
-- Build a support system.
-- Regular self-reflection journaling.
+## 3. Долгосрочные цели
+- Постройте систему поддержки.
+- Регулярное ведение дневника саморефлексии.
       `,
       psychPrep: `
-# Preparation for Psychologist Session
+# Подготовка к сеансу с психологом
 
-## Key Topics to Discuss
-1. The specific situation where you felt most overwhelmed.
-2. The correlation between your sleep and mood.
-3. Impact on work/relationships.
+## Ключевые темы для обсуждения
+1. Конкретная ситуация, в которой вы чувствовали себя наиболее подавленно.
+2. Корреляция между вашим сном и настроением.
+3. Влияние на работу/отношения.
 
-## Recommended Approach
-- Be open about your daily routine.
-- Mention the appetite changes.
+## Рекомендуемый подход
+- Будьте открыты относительно своего распорядка дня.
+- Упомяните изменения в аппетите.
       `,
       specialistDoc: `
-# Specialist Hypothesis Document
+# Документ гипотез для специалиста
 
-## Potential Areas of Concern
-- **Generalized Anxiety**: Indicated by "overwhelmed" feeling and sleep disturbance.
-- **Burnout**: If work-related stress is high.
+## Потенциальные области беспокойства
+- **Генерализованная тревожность**: Указывается чувством "подавленности" и нарушениями сна.
+- **Выгорание**: Если рабочий стресс высок.
 
-## Recommended Tests/Assessments
-- **GAD-7**: To assess anxiety levels.
-- **PHQ-9**: To screen for depressive symptoms.
-- **Cortisol Level Test**: To check physiological stress response.
+## Рекомендуемые тесты/оценки
+- **GAD-7**: Для оценки уровня тревожности.
+- **PHQ-9**: Для скрининга депрессивных симптомов.
+- **Тест уровня кортизола**: Для проверки физиологической реакции на стресс.
 
-## Hypotheses
-1. Sleep deprivation is exacerbating emotional regulation issues.
-2. Environmental stressors are the primary trigger.
+## Гипотезы
+1. Недосып усугубляет проблемы с эмоциональной регуляцией.
+2. Факторы окружающей среды являются основным триггером.
       `,
       recommendedTests: [
-        { name: 'GAD-7', description: 'Generalized Anxiety Disorder assessment' },
-        { name: 'Cortisol Test', description: 'Physiological stress marker check' }
+        { name: 'GAD-7', description: 'Оценка генерализованного тревожного расстройства' },
+        { name: 'Тест на кортизол', description: 'Проверка физиологического маркера стресса' }
       ]
     };
   }
