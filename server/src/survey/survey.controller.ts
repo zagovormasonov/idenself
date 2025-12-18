@@ -8,7 +8,7 @@ export class SurveyController {
   constructor(private surveyService: SurveyService) {}
 
   @Post('start')
-  async startSurvey(@Request() req, @Body() body: { complaint: string }) {
+  async startSurvey(@Request() req: any, @Body() body: { complaint: string }) {
     return this.surveyService.createSession(req.user.userId, body.complaint);
   }
 
