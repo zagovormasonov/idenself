@@ -22,13 +22,13 @@ export const ComplaintPage: React.FC = () => {
 
   return (
     <div className="max-w-3xl mx-auto py-12">
-      <h2 className="text-3xl font-bold mb-6 text-primary">How are you feeling?</h2>
-      <p className="mb-8 text-secondary text-lg">
-        Describe your complaints, symptoms, or what's bothering you in your own words. The more detail you provide, the better we can help.
+      <h2 className="text-4xl font-bold mb-6 bg-gradient-brand bg-clip-text text-transparent">Как вы себя чувствуете?</h2>
+      <p className="mb-8 text-white/80 text-lg leading-relaxed">
+        Опишите своими словами жалобы, симптомы или то, что вас беспокоит. Чем больше деталей вы предоставите, тем лучше мы сможем вам помочь.
       </p>
       <textarea
-        className="w-full h-64 p-6 border border-gray-200 rounded-xl shadow-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-lg resize-none"
-        placeholder="I've been feeling..."
+        className="w-full h-64 p-6 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-white/50 focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-lg resize-none backdrop-blur-sm"
+        placeholder="Я чувствую себя..."
         value={complaint}
         onChange={(e) => setComplaint(e.target.value)}
       />
@@ -36,9 +36,9 @@ export const ComplaintPage: React.FC = () => {
         <button
           onClick={handleSubmit}
           disabled={loading || !complaint.trim()}
-          className="bg-primary text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-opacity-90 transition-all disabled:opacity-50 shadow-lg"
+          className="bg-gradient-brand text-navy px-10 py-4 rounded-xl text-lg font-semibold hover:shadow-2xl hover:shadow-primary/50 transition-all disabled:opacity-50 disabled:hover:shadow-none transform hover:scale-105 disabled:hover:scale-100"
         >
-          {loading ? 'Analyzing...' : 'Start Assessment'}
+          {loading ? 'Анализирую...' : 'Начать оценку'}
         </button>
       </div>
     </div>
