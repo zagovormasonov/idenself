@@ -11,25 +11,25 @@ import { ResultsPage } from './pages/ResultsPage';
 // Placeholder for other pages
 const HomePage = () => (
   <div className="text-center py-20">
-    <h2 className="text-4xl font-bold mb-4 text-primary">Your Mental Health Journey Starts Here</h2>
-    <p className="text-xl text-secondary mb-8 max-w-2xl mx-auto">
-      Professional assessment powered by AI to help you understand yourself better.
+    <h2 className="text-5xl font-bold mb-6 bg-gradient-brand bg-clip-text text-transparent leading-tight">Ваш путь к себе начинается здесь</h2>
+    <p className="text-xl text-white/80 mb-12 max-w-2xl mx-auto leading-relaxed">
+      Профессиональная оценка с использованием ИИ поможет вам лучше понять себя
     </p>
     <div className="flex justify-center mb-16">
-        <a href="/complaint" className="bg-primary text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-opacity-90 transition-all shadow-lg">Start Assessment</a>
+        <a href="/complaint" className="bg-gradient-brand text-navy px-10 py-4 rounded-xl text-lg font-semibold hover:shadow-2xl hover:shadow-primary/50 transition-all transform hover:scale-105">Начать оценку</a>
     </div>
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left mt-12">
-        <div className="p-6 bg-white rounded-xl shadow-sm border border-gray-100">
-            <h3 className="font-semibold text-lg mb-2 text-primary">Describe</h3>
-            <p className="text-gray-600">Tell us about your complaints in your own words.</p>
+        <div className="p-8 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:bg-white/10 transition-all">
+            <h3 className="font-semibold text-xl mb-3 bg-gradient-brand bg-clip-text text-transparent">Опишите</h3>
+            <p className="text-white/70 leading-relaxed">Расскажите о своих жалобах своими словами</p>
         </div>
-        <div className="p-6 bg-white rounded-xl shadow-sm border border-gray-100">
-            <h3 className="font-semibold text-lg mb-2 text-primary">Assess</h3>
-            <p className="text-gray-600">Answer dynamic questions generated specifically for you.</p>
+        <div className="p-8 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:bg-white/10 transition-all">
+            <h3 className="font-semibold text-xl mb-3 bg-gradient-brand bg-clip-text text-transparent">Оцените</h3>
+            <p className="text-white/70 leading-relaxed">Ответьте на динамические вопросы, созданные специально для вас</p>
         </div>
-        <div className="p-6 bg-white rounded-xl shadow-sm border border-gray-100">
-            <h3 className="font-semibold text-lg mb-2 text-primary">Understand</h3>
-            <p className="text-gray-600">Get a detailed personal plan and professional guidance.</p>
+        <div className="p-8 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:bg-white/10 transition-all">
+            <h3 className="font-semibold text-xl mb-3 bg-gradient-brand bg-clip-text text-transparent">Поймите</h3>
+            <p className="text-white/70 leading-relaxed">Получите детальный личный план и профессиональное руководство</p>
         </div>
     </div>
   </div>

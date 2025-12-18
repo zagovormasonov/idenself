@@ -7,14 +7,30 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#4F46E5', // Indigo 600 - Placeholder for premium
-        secondary: '#1E293B', // Slate 800
-        accent: '#F59E0B', // Amber 500
-        background: '#F8FAFC', // Slate 50
+        primary: {
+          DEFAULT: '#6dd5c3',
+          dark: '#2c4a68',
+          light: '#7dd3c0',
+        },
+        secondary: {
+          DEFAULT: '#ffd966',
+          dark: '#1e3a5f',
+        },
+        accent: '#f9e06f',
+        background: '#f0f4f8',
         surface: '#FFFFFF',
+        navy: {
+          DEFAULT: '#1e3a5f',
+          light: '#2c4a68',
+          dark: '#142841',
+        }
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'], // Placeholder
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+      },
+      backgroundImage: {
+        'gradient-brand': 'linear-gradient(135deg, #6dd5c3 0%, #ffd966 100%)',
+        'gradient-brand-hover': 'linear-gradient(135deg, #7dd3c0 0%, #f9e06f 100%)',
       }
     },
   },

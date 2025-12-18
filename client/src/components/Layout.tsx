@@ -12,19 +12,19 @@ export const Layout: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <header className="bg-surface shadow-sm p-4 flex justify-between items-center z-10">
-        <Link to="/" className="text-2xl font-bold text-primary tracking-tight">MentalHealth<span className="font-light">AI</span></Link>
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-navy-dark via-navy to-navy-light">
+      <header className="bg-navy/50 backdrop-blur-sm border-b border-white/10 p-4 flex justify-between items-center z-10">
+        <Link to="/" className="text-2xl font-bold bg-gradient-brand bg-clip-text text-transparent tracking-tight">IdenSelf</Link>
         <nav>
             {user ? (
                 <div className="flex items-center gap-6">
-                    <span className="text-sm font-medium text-secondary hidden sm:block">{user.email}</span>
-                    <button onClick={handleLogout} className="text-sm font-medium text-secondary hover:text-primary transition-colors">Logout</button>
+                    <span className="text-sm font-medium text-white/80 hidden sm:block">{user.email}</span>
+                    <button onClick={handleLogout} className="text-sm font-medium text-white/80 hover:text-white transition-colors">Выйти</button>
                 </div>
             ) : (
                 <div className="flex items-center gap-6">
-                     <Link to="/login" className="text-sm font-medium text-secondary hover:text-primary transition-colors">Login</Link>
-                     <Link to="/register" className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-opacity-90 transition-all shadow-md">Get Started</Link>
+                     <Link to="/login" className="text-sm font-medium text-white/80 hover:text-white transition-colors">Войти</Link>
+                     <Link to="/register" className="px-4 py-2 bg-gradient-brand text-navy font-semibold rounded-lg text-sm hover:shadow-lg hover:shadow-primary/50 transition-all">Начать</Link>
                 </div>
             )}
         </nav>
@@ -32,8 +32,8 @@ export const Layout: React.FC = () => {
       <main className="flex-grow p-6 container mx-auto max-w-5xl">
         <Outlet />
       </main>
-      <footer className="p-6 text-center text-gray-400 text-xs mt-auto">
-        © 2025 MentalHealthAI. All rights reserved.
+      <footer className="p-6 text-center text-white/40 text-xs mt-auto">
+        © 2025 IdenSelf. Все права защищены.
       </footer>
     </div>
   );
