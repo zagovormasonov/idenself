@@ -18,18 +18,32 @@ export class GeminiService {
     }
     
     try {
-      const response = await axios.post(`${this.bridgeApiUrl}/api/generate-part1`, {
-        complaint
-      }, {
+      const url = `${this.bridgeApiUrl}/api/generate-part1`;
+      const payload = { complaint };
+      
+      console.log('=== Calling Bridge API for Part 1 ===');
+      console.log('URL:', url);
+      console.log('Payload:', JSON.stringify(payload, null, 2));
+      
+      const response = await axios.post(url, payload, {
         timeout: 60000, // 60 seconds timeout
         headers: {
           'Content-Type': 'application/json'
         }
       });
       
+      console.log('Bridge API Response Status:', response.status);
+      console.log('Response Data:', JSON.stringify(response.data, null, 2));
+      
       return response.data.questions;
-    } catch (error) {
-      console.error('Error calling bridge API for part1:', error.message);
+    } catch (error: any) {
+      console.error('=== Error calling bridge API for part1 ===');
+      console.error('Error message:', error.message);
+      if (error.response) {
+        console.error('Response status:', error.response.status);
+        console.error('Response data:', JSON.stringify(error.response.data, null, 2));
+        console.error('Response headers:', JSON.stringify(error.response.headers, null, 2));
+      }
       console.log('Falling back to mock data');
       return this.getMockPart1();
     }
@@ -42,19 +56,32 @@ export class GeminiService {
     }
     
     try {
-      const response = await axios.post(`${this.bridgeApiUrl}/api/generate-part2`, {
-        complaint,
-        answerspart1: part1Answers
-      }, {
+      const url = `${this.bridgeApiUrl}/api/generate-part2`;
+      const payload = { complaint, answerspart1: part1Answers };
+      
+      console.log('=== Calling Bridge API for Part 2 ===');
+      console.log('URL:', url);
+      console.log('Payload:', JSON.stringify(payload, null, 2));
+      
+      const response = await axios.post(url, payload, {
         timeout: 60000,
         headers: {
           'Content-Type': 'application/json'
         }
       });
       
+      console.log('Bridge API Response Status:', response.status);
+      console.log('Response Data:', JSON.stringify(response.data, null, 2));
+      
       return response.data.questions;
-    } catch (error) {
-      console.error('Error calling bridge API for part2:', error.message);
+    } catch (error: any) {
+      console.error('=== Error calling bridge API for part2 ===');
+      console.error('Error message:', error.message);
+      if (error.response) {
+        console.error('Response status:', error.response.status);
+        console.error('Response data:', JSON.stringify(error.response.data, null, 2));
+        console.error('Response headers:', JSON.stringify(error.response.headers, null, 2));
+      }
       console.log('Falling back to mock data');
       return this.getMockPart2();
     }
@@ -67,20 +94,32 @@ export class GeminiService {
     }
     
     try {
-      const response = await axios.post(`${this.bridgeApiUrl}/api/generate-results`, {
-        complaint,
-        answerspart1: part1Answers,
-        answerspart2: part2Answers
-      }, {
+      const url = `${this.bridgeApiUrl}/api/generate-results`;
+      const payload = { complaint, answerspart1: part1Answers, answerspart2: part2Answers };
+      
+      console.log('=== Calling Bridge API for Results ===');
+      console.log('URL:', url);
+      console.log('Payload:', JSON.stringify(payload, null, 2));
+      
+      const response = await axios.post(url, payload, {
         timeout: 120000, // 2 minutes for complex generation
         headers: {
           'Content-Type': 'application/json'
         }
       });
       
+      console.log('Bridge API Response Status:', response.status);
+      console.log('Response Data:', JSON.stringify(response.data, null, 2));
+      
       return response.data;
-    } catch (error) {
-      console.error('Error calling bridge API for results:', error.message);
+    } catch (error: any) {
+      console.error('=== Error calling bridge API for results ===');
+      console.error('Error message:', error.message);
+      if (error.response) {
+        console.error('Response status:', error.response.status);
+        console.error('Response data:', JSON.stringify(error.response.data, null, 2));
+        console.error('Response headers:', JSON.stringify(error.response.headers, null, 2));
+      }
       console.log('Falling back to mock data');
       return this.getMockResults();
     }
