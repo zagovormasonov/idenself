@@ -21,6 +21,7 @@ services:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/mvp_db
       - JWT_SECRET=supersecretkey
       - PORT=3000
+      - BRIDGE_API_URL=${BRIDGE_API_URL:-}
     depends_on:
       postgres:
         condition: service_healthy

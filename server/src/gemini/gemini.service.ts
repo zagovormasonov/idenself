@@ -1,44 +1,89 @@
 import { Injectable } from '@nestjs/common';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import axios from 'axios';
 
 @Injectable()
 export class GeminiService {
-  private genAI: GoogleGenerativeAI;
-  private model: any;
+  private bridgeApiUrl: string;
+  private useBridge: boolean;
 
   constructor() {
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (apiKey) {
-      this.genAI = new GoogleGenerativeAI(apiKey);
-      this.model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-    }
+    this.bridgeApiUrl = process.env.BRIDGE_API_URL;
+    this.useBridge = !!this.bridgeApiUrl;
   }
 
   async generatePart1(complaint: string): Promise<any> {
-    if (!this.model) {
+    if (!this.useBridge) {
+      console.log('Bridge API URL not configured, using mock data');
       return this.getMockPart1();
     }
     
-    // Stub for real AI call
-    // In real implementation: prompt engineering to return JSON
-    // const result = await this.model.generateContent(`Generate survey part 1 for complaint: ${complaint}`);
-    // return JSON.parse(result.response.text());
-    
-    return this.getMockPart1();
+    try {
+      const response = await axios.post(`${this.bridgeApiUrl}/api/generate-part1`, {
+        complaint
+      }, {
+        timeout: 60000, // 60 seconds timeout
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      return response.data.questions;
+    } catch (error) {
+      console.error('Error calling bridge API for part1:', error.message);
+      console.log('Falling back to mock data');
+      return this.getMockPart1();
+    }
   }
 
   async generatePart2(complaint: string, part1Answers: any): Promise<any> {
-    if (!this.model) {
+    if (!this.useBridge) {
+      console.log('Bridge API URL not configured, using mock data');
       return this.getMockPart2();
     }
-    return this.getMockPart2();
+    
+    try {
+      const response = await axios.post(`${this.bridgeApiUrl}/api/generate-part2`, {
+        complaint,
+        answerspart1: part1Answers
+      }, {
+        timeout: 60000,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      return response.data.questions;
+    } catch (error) {
+      console.error('Error calling bridge API for part2:', error.message);
+      console.log('Falling back to mock data');
+      return this.getMockPart2();
+    }
   }
 
   async generateResults(complaint: string, part1Answers: any, part2Answers: any): Promise<any> {
-    if (!this.model) {
+    if (!this.useBridge) {
+      console.log('Bridge API URL not configured, using mock data');
       return this.getMockResults();
     }
-    return this.getMockResults();
+    
+    try {
+      const response = await axios.post(`${this.bridgeApiUrl}/api/generate-results`, {
+        complaint,
+        answerspart1: part1Answers,
+        answerspart2: part2Answers
+      }, {
+        timeout: 120000, // 2 minutes for complex generation
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      return response.data;
+    } catch (error) {
+      console.error('Error calling bridge API for results:', error.message);
+      console.log('Falling back to mock data');
+      return this.getMockResults();
+    }
   }
 
   private getMockPart1() {
