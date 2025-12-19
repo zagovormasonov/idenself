@@ -3,7 +3,7 @@ import axios from 'axios';
 
 @Injectable()
 export class GeminiService {
-  private bridgeApiUrl: string;
+  private bridgeApiUrl: string | undefined;
   private useBridge: boolean;
 
   constructor() {
