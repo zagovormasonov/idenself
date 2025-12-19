@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import ReactMarkdown from 'react-markdown'; // Assuming we might want markdown, but I will simulate it with pre-wrap for now to save install
 
 export const ResultsPage: React.FC = () => {
   const { id } = useParams();
@@ -103,4 +102,3 @@ export const ResultsPage: React.FC = () => {
     </div>
   );
 };
-
