@@ -22,6 +22,15 @@ export const ComplaintPage: React.FC = () => {
 
   return (
     <div className="max-w-3xl mx-auto py-12">
+      <button 
+        onClick={() => navigate('/')} 
+        className="flex items-center text-white/60 hover:text-white mb-6 transition-colors group"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
+        Назад
+      </button>
       <h2 className="text-4xl font-bold mb-6 text-white">Как вы себя чувствуете?</h2>
       <p className="mb-8 text-white/80 text-lg leading-relaxed">
         Опишите своими словами жалобы, симптомы или то, что вас беспокоит. Чем больше деталей вы предоставите, тем лучше мы сможем вам помочь.

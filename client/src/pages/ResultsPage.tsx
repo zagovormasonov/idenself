@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown'; // Assuming we might want markdown, 
 
 export const ResultsPage: React.FC = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [results, setResults] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('plan');
@@ -38,6 +39,15 @@ export const ResultsPage: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto py-12">
+      <button 
+        onClick={() => navigate('/')} 
+        className="flex items-center text-white/60 hover:text-white mb-6 transition-colors group"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
+        На главную
+      </button>
       <h1 className="text-4xl font-bold mb-3 text-center text-white">Ваша оценка завершена</h1>
       <p className="text-center text-white/80 mb-12 text-lg">Вот ваша персонализированная оценка ментального здоровья</p>
 
