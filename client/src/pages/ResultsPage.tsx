@@ -19,7 +19,7 @@ export const ResultsPage: React.FC = () => {
           setResults(resultQ.questions);
         }
       } catch (error) {
-        console.error('Failed to load results', error);
+        console.error('Не удалось загрузить результаты', error);
       } finally {
         setLoading(false);
       }

@@ -40,7 +40,7 @@ export class SurveyService {
       include: { questionnaires: true },
     });
 
-    if (!session) throw new NotFoundException('Session not found');
+    if (!session) throw new NotFoundException('Сессия не найдена');
 
     if (session.status === 'STARTED') {
       // Find Part 1 questionnaire and save answers
@@ -103,7 +103,7 @@ export class SurveyService {
       return { nextStep: 'FINISHED', results };
     }
 
-    return { message: 'Session already finished' };
+    return { message: 'Сессия уже завершена' };
   }
   
   async getSession(sessionId: number) {

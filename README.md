@@ -50,3 +50,4 @@ npm run dev
 - **AI**: Google Gemini Flash 1.5
 - **Infrastructure**: Docker
 
+

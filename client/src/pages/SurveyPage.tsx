@@ -30,7 +30,7 @@ export const SurveyPage: React.FC = () => {
             setPart(lastQ.type);
         }
       } catch (error) {
-        console.error('Failed to load session', error);
+        console.error('Не удалось загрузить сессию', error);
       } finally {
         setLoading(false);
       }
@@ -55,7 +55,7 @@ export const SurveyPage: React.FC = () => {
         window.scrollTo(0, 0);
       }
     } catch (error) {
-      console.error('Failed to submit answers', error);
+      console.error('Не удалось отправить ответы', error);
     } finally {
       setSubmitting(false);
     }

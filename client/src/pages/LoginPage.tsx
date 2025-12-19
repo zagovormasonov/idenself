@@ -17,7 +17,7 @@ export const LoginPage: React.FC = () => {
       login(response.data.access_token, response.data.user);
       navigate('/');
     } catch (err) {
-      setError('Invalid email or password');
+      setError('Неверный email или пароль');
     }
   };
 

@@ -10,7 +10,7 @@ export class AuthController {
   async login(@Body() body: any) {
     const user = await this.authService.validateUser(body.email, body.password);
     if (!user) {
-      throw new BadRequestException('Invalid credentials');
+      throw new BadRequestException('Неверный email или пароль');
     }
     return this.authService.login(user);
   }
@@ -19,9 +19,10 @@ export class AuthController {
   async register(@Body() body: any) {
     // Basic validation
     if (!body.email || !body.password) {
-       throw new BadRequestException('Email and password are required');
+       throw new BadRequestException('Email и пароль обязательны');
     }
     return this.authService.register(body);
   }
 }
+
 

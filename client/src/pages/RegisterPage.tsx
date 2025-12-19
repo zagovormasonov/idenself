@@ -20,7 +20,7 @@ export const RegisterPage: React.FC = () => {
       login(response.data.access_token, response.data.user);
       navigate('/');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Registration failed');
+      setError(err.response?.data?.message || 'Ошибка регистрации');
     }
   };
 
