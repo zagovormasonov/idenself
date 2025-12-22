@@ -135,7 +135,7 @@ export const SymptomsPage: React.FC = () => {
 
       {/* Список симптомов */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-        {symptoms.map((symptom) => {
+        {symptoms && Array.isArray(symptoms) && symptoms.length > 0 ? symptoms.map((symptom) => {
           const isSelected = !!selectedSymptoms[symptom.id];
           return (
             <button

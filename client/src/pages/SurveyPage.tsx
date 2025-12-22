@@ -114,7 +114,7 @@ export const SurveyPage: React.FC = () => {
       </div>
       
       <div className="space-y-6">
-        {questions.map((q: any) => (
+        {questions && Array.isArray(questions) && questions.length > 0 ? questions.map((q: any) => (
           <div key={q.id} className="bg-white/5 backdrop-blur-sm p-6 rounded-2xl border border-white/10">
             <label className="block text-lg font-medium text-white mb-4">{q.text}</label>
             
