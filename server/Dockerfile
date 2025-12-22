@@ -12,6 +12,9 @@ RUN npm run build
 
 FROM node:20-alpine
 
+# Install netcat for database connection check
+RUN apk add --no-cache netcat-openbsd
+
 WORKDIR /app
 
 COPY --from=builder /app/dist ./dist
@@ -19,7 +22,11 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/prisma ./prisma
 
+# Copy and set up entrypoint script
+COPY docker-entrypoint.sh ./
+RUN chmod +x docker-entrypoint.sh
+
 EXPOSE 3000
 
-CMD ["npm", "run", "start:prod"]
+ENTRYPOINT ["./docker-entrypoint.sh"]
 
