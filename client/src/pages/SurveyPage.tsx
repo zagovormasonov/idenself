@@ -17,6 +17,12 @@ export const SurveyPage: React.FC = () => {
         const response = await axios.get(`/api/survey/${id}`);
         const session = response.data;
         
+        // Check if variants need to be selected
+        if (session.status === 'VARIANTS_PENDING') {
+          navigate(`/variants/${id}`);
+          return;
+        }
+
         // Determine state
         const lastQ = session.questionnaires[session.questionnaires.length - 1];
         
@@ -43,6 +49,20 @@ export const SurveyPage: React.FC = () => {
   };
 
   const handleSubmit = async () => {
+    // Validate that all questions are answered
+    const unansweredQuestions = questions.filter((q: any) => {
+      const answer = answers[q.id];
+      if (q.type === 'text') {
+        return !answer || answer.trim() === '';
+      }
+      return answer === undefined || answer === null || answer === '';
+    });
+
+    if (unansweredQuestions.length > 0) {
+      alert(`Пожалуйста, ответьте на все вопросы. Осталось ${unansweredQuestions.length} вопросов.`);
+      return;
+    }
+
     setSubmitting(true);
     try {
       const response = await axios.post(`/api/survey/${id}/submit`, { answers });
@@ -135,10 +155,13 @@ export const SurveyPage: React.FC = () => {
         ))}
       </div>
 
-      <div className="mt-12 flex justify-end">
+      <div className="mt-12 flex justify-between items-center">
+        <div className="text-white/60 text-sm">
+          Отвечено: {Object.keys(answers).length} из {questions.length}
+        </div>
         <button
           onClick={handleSubmit}
-          disabled={submitting}
+          disabled={submitting || Object.keys(answers).length < questions.length}
           className="bg-white text-navy px-10 py-4 rounded-xl text-lg font-semibold hover:shadow-2xl hover:shadow-white/50 transition-all disabled:opacity-50 disabled:hover:shadow-none transform hover:scale-105 disabled:hover:scale-100"
         >
           {submitting ? 'Обработка...' : 'Продолжить'}

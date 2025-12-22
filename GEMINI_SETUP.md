@@ -147,3 +147,4 @@ sudo docker compose logs app-server | grep -i bridge
 - Timeout для генерации: 60 секунд для вопросов, 120 секунд для результатов
 - Все запросы идут с заголовком `Content-Type: application/json`
 
+

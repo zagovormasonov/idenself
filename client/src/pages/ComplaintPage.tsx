@@ -12,7 +12,7 @@ export const ComplaintPage: React.FC = () => {
     setLoading(true);
     try {
       const response = await axios.post('/api/survey/start', { complaint });
-      navigate(`/survey/${response.data.sessionId}`);
+      navigate(`/variants/${response.data.sessionId}`);
     } catch (error) {
       console.error('Не удалось начать опрос', error);
     } finally {

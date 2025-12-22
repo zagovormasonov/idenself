@@ -10,19 +10,53 @@ export class SurveyService {
   ) {}
 
   async createSession(userId: number, complaint: string) {
-    // 1. Generate Part 1 questions
-    const questions = await this.gemini.generatePart1(complaint);
+    // 1. Generate variants for user to select
+    const variants = await this.gemini.generateVariants(complaint);
 
     // 2. Create Session
     const session = await this.prisma.session.create({
       data: {
         userId,
         complaint,
-        status: 'STARTED',
+        status: 'VARIANTS_PENDING',
       },
     });
 
-    // 3. Save Questionnaire
+    // 3. Save Variants
+    await this.prisma.questionnaire.create({
+      data: {
+        sessionId: session.id,
+        type: 'VARIANTS',
+        questions: { variants },
+      },
+    });
+
+    return { sessionId: session.id, variants };
+  }
+
+  async selectVariant(sessionId: number, selectedVariant: string) {
+    const session = await this.prisma.session.findUnique({
+      where: { id: sessionId },
+    });
+
+    if (!session) throw new NotFoundException('Сессия не найдена');
+    if (session.status !== 'VARIANTS_PENDING') {
+      throw new NotFoundException('Вариант уже выбран');
+    }
+
+    // Update session with selected variant
+    await this.prisma.session.update({
+      where: { id: sessionId },
+      data: { 
+        status: 'STARTED',
+        complaint: selectedVariant // Update complaint with selected variant
+      },
+    });
+
+    // Generate Part 1 questions based on selected variant
+    const questions = await this.gemini.generatePart1(session.complaint, selectedVariant);
+
+    // Save Part 1 questionnaire
     await this.prisma.questionnaire.create({
       data: {
         sessionId: session.id,
@@ -31,7 +65,7 @@ export class SurveyService {
       },
     });
 
-    return { sessionId: session.id, questions };
+    return { questions };
   }
 
   async submitAnswers(sessionId: number, answers: any) {

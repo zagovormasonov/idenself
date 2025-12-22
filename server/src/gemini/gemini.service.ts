@@ -11,7 +11,52 @@ export class GeminiService {
     this.useBridge = !!this.bridgeApiUrl;
   }
 
-  async generatePart1(complaint: string): Promise<any> {
+  async generateVariants(complaint: string): Promise<string[]> {
+    if (!this.useBridge) {
+      console.log('Bridge API URL not configured, using mock variants');
+      return [
+        'Я чувствую постоянную усталость и сонливость',
+        'У меня проблемы со сном и настроением',
+        'Меня беспокоит тревожность и стресс'
+      ];
+    }
+    
+    try {
+      const url = `${this.bridgeApiUrl}/api/generate-variants`;
+      const payload = { complaint };
+      
+      console.log('=== Calling Bridge API for Variants ===');
+      console.log('URL:', url);
+      console.log('Payload:', JSON.stringify(payload, null, 2));
+      
+      const response = await axios.post(url, payload, {
+        timeout: 60000,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      console.log('Bridge API Response Status:', response.status);
+      console.log('Response Data:', JSON.stringify(response.data, null, 2));
+      
+      return response.data.variants || [];
+    } catch (error: any) {
+      console.error('=== Error calling bridge API for variants ===');
+      console.error('Error message:', error.message);
+      if (error.response) {
+        console.error('Response status:', error.response.status);
+        console.error('Response data:', JSON.stringify(error.response.data, null, 2));
+      }
+      console.log('Falling back to mock variants');
+      return [
+        'Я чувствую постоянную усталость и сонливость',
+        'У меня проблемы со сном и настроением',
+        'Меня беспокоит тревожность и стресс'
+      ];
+    }
+  }
+
+  async generatePart1(complaint: string, selectedVariant?: string): Promise<any> {
     if (!this.useBridge) {
       console.log('Bridge API URL not configured, using mock data');
       return this.getMockPart1();
@@ -19,7 +64,10 @@ export class GeminiService {
     
     try {
       const url = `${this.bridgeApiUrl}/api/generate-part1`;
-      const payload = { complaint };
+      const payload = { 
+        complaint,
+        selectedVariant: selectedVariant || complaint
+      };
       
       console.log('=== Calling Bridge API for Part 1 ===');
       console.log('URL:', url);

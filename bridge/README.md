@@ -46,3 +46,4 @@ npm start
 - Для production рекомендуется ограничить CORS только вашим доменом
 - API ключ Gemini хранится только на Render.com
 
+

@@ -19,8 +19,8 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// Generate Part 1 questionnaire based on complaint
-app.post('/api/generate-part1', async (req, res) => {
+// Generate clickable variants based on complaint
+app.post('/api/generate-variants', async (req, res) => {
   try {
     const { complaint } = req.body;
 
@@ -28,7 +28,55 @@ app.post('/api/generate-part1', async (req, res) => {
       return res.status(400).json({ error: 'Complaint is required' });
     }
 
-    const prompt = `Ты - профессиональный психолог и психиатр. Пользователь описал свои жалобы: "${complaint}"
+    const prompt = `Ты - профессиональный психолог. Пользователь описал свои жалобы: "${complaint}"
+
+На основе этого описания создай 3-5 кликабельных вариантов ответов, которые наиболее точно отражают возможные состояния пользователя. Каждый вариант должен быть:
+- Кратким (1-2 предложения)
+- Конкретным и понятным
+- Отражать разные аспекты описанной проблемы
+- Написан от первого лица (как будто пользователь сам описывает)
+
+Верни ТОЛЬКО валидный JSON в следующем формате (без дополнительного текста, без markdown):
+{
+  "variants": [
+    "Первый вариант ответа от первого лица",
+    "Второй вариант ответа от первого лица",
+    "Третий вариант ответа от первого лица"
+  ]
+}`;
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    let text = response.text();
+
+    // Clean up response - remove markdown code blocks if present
+    text = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+
+    try {
+      const parsedResponse = JSON.parse(text);
+      res.json(parsedResponse);
+    } catch (parseError) {
+      console.error('Failed to parse Gemini response:', text);
+      res.status(500).json({ error: 'Failed to parse AI response', details: text });
+    }
+  } catch (error) {
+    console.error('Error generating variants:', error);
+    res.status(500).json({ error: 'Failed to generate variants', details: error.message });
+  }
+});
+
+// Generate Part 1 questionnaire based on complaint
+app.post('/api/generate-part1', async (req, res) => {
+  try {
+    const { complaint, selectedVariant } = req.body;
+
+    if (!complaint && !selectedVariant) {
+      return res.status(400).json({ error: 'Complaint or selectedVariant is required' });
+    }
+
+    const contextText = selectedVariant || complaint;
+
+    const prompt = `Ты - профессиональный психолог и психиатр. Пользователь выбрал следующий вариант, описывающий его состояние: "${contextText}"
 
 На основе этих жалоб создай первую часть опросника для оценки психического здоровья. Опросник должен:
 1. Включать 8-12 вопросов
@@ -219,4 +267,5 @@ app.listen(PORT, () => {
   console.log(`Bridge API server running on port ${PORT}`);
   console.log(`Gemini API Key configured: ${!!process.env.GEMINI_API_KEY}`);
 });
+
 

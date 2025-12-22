@@ -5,6 +5,7 @@ import { Layout } from './components/Layout';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { ComplaintPage } from './pages/ComplaintPage';
+import { VariantSelectionPage } from './pages/VariantSelectionPage';
 import { SurveyPage } from './pages/SurveyPage';
 import { ResultsPage } from './pages/ResultsPage';
 
@@ -45,6 +46,7 @@ function App() {
             <Route path="login" element={<LoginPage />} />
             <Route path="register" element={<RegisterPage />} />
             <Route path="complaint" element={<ComplaintPage />} />
+            <Route path="variants/:id" element={<VariantSelectionPage />} />
             <Route path="survey/:id" element={<SurveyPage />} />
             <Route path="results/:id" element={<ResultsPage />} />
           </Route>

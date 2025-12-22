@@ -12,6 +12,14 @@ export class SurveyController {
     return this.surveyService.createSession(req.user.userId, body.complaint);
   }
 
+  @Post(':id/select-variant')
+  async selectVariant(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: { selectedVariant: string }
+  ) {
+    return this.surveyService.selectVariant(id, body.selectedVariant);
+  }
+
   @Post(':id/submit')
   async submitAnswers(
     @Param('id', ParseIntPipe) id: number,
