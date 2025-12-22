@@ -18,7 +18,7 @@ export const SurveyPage: React.FC = () => {
         const session = response.data;
         
         // Check if symptoms need to be selected
-        if (session.status === 'SYMPTOMS_PENDING') {
+        if (session.status === 'SYMPTOMS_PENDING' || !session.questionnaires || session.questionnaires.length === 0) {
           navigate(`/symptoms/${id}`);
           return;
         }
@@ -31,7 +31,7 @@ export const SurveyPage: React.FC = () => {
             return;
         }
 
-        if (lastQ) {
+        if (lastQ && lastQ.questions) {
             setQuestions(lastQ.questions);
             const partMap: Record<string, string> = {
               'PART1': 'Этап 1',
@@ -39,6 +39,9 @@ export const SurveyPage: React.FC = () => {
               'PART3': 'Этап 3'
             };
             setPart(partMap[lastQ.type] || lastQ.type);
+        } else {
+          // No questions available, redirect to symptoms
+          navigate(`/symptoms/${id}`);
         }
       } catch (error) {
         console.error('Не удалось загрузить сессию', error);

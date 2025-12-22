@@ -37,9 +37,11 @@ export const SymptomsPage: React.FC = () => {
           setSymptoms(symptomsResponse.data.symptoms || []);
         }
 
-        // Загружаем сохраненные данные
-        if (session.symptomsData) {
-          setSelectedSymptoms(session.symptomsData);
+        // Загружаем сохраненные данные (выбранные симптомы хранятся в session.symptoms как JSON)
+        // session.symptoms может быть либо массивом симптомов для выбора, либо объектом с выбранными симптомами
+        if (session.symptoms && typeof session.symptoms === 'object' && !Array.isArray(session.symptoms)) {
+          // Это выбранные симптомы (объект)
+          setSelectedSymptoms(session.symptoms);
         }
         if (session.complaint) {
           setGeneralDescription(session.complaint);
