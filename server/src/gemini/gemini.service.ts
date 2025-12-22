@@ -11,6 +11,35 @@ export class GeminiService {
     this.useBridge = !!this.bridgeApiUrl;
   }
 
+  async getSymptomsList(): Promise<any[]> {
+    if (!this.useBridge) {
+      console.log('Bridge API URL not configured, using mock symptoms');
+      return [
+        { id: 's1', name: 'Тревожность', clarifications: ['Постоянная тревога', 'Панические атаки', 'Беспокойство без причины'] },
+        { id: 's2', name: 'Депрессия', clarifications: ['Плохое настроение', 'Потеря интереса', 'Чувство безнадежности'] },
+        { id: 's3', name: 'Проблемы со сном', clarifications: ['Бессонница', 'Частые пробуждения', 'Слишком долгий сон'] },
+        { id: 's4', name: 'Усталость', clarifications: ['Постоянная усталость', 'Нет энергии', 'Сложно вставать утром'] },
+        { id: 's5', name: 'Проблемы с концентрацией', clarifications: ['Трудно сосредоточиться', 'Забывчивость', 'Рассеянность'] },
+        { id: 's6', name: 'Изменения аппетита', clarifications: ['Потеря аппетита', 'Переедание', 'Изменение веса'] },
+        { id: 's7', name: 'Раздражительность', clarifications: ['Вспышки гнева', 'Нетерпимость', 'Агрессивность'] },
+        { id: 's8', name: 'Социальная изоляция', clarifications: ['Избегание общения', 'Одиночество', 'Трудности в отношениях'] }
+      ];
+    }
+    
+    try {
+      const url = `${this.bridgeApiUrl}/api/get-symptoms`;
+      const response = await axios.get(url, { timeout: 30000 });
+      return response.data.symptoms || [];
+    } catch (error: any) {
+      console.error('Error getting symptoms list:', error.message);
+      return [
+        { id: 's1', name: 'Тревожность', clarifications: ['Постоянная тревога', 'Панические атаки', 'Беспокойство без причины'] },
+        { id: 's2', name: 'Депрессия', clarifications: ['Плохое настроение', 'Потеря интереса', 'Чувство безнадежности'] },
+        { id: 's3', name: 'Проблемы со сном', clarifications: ['Бессонница', 'Частые пробуждения', 'Слишком долгий сон'] }
+      ];
+    }
+  }
+
   async generateVariants(complaint: string): Promise<string[]> {
     if (!this.useBridge) {
       console.log('Bridge API URL not configured, using mock variants');
@@ -56,7 +85,7 @@ export class GeminiService {
     }
   }
 
-  async generatePart1(complaint: string, selectedVariant?: string): Promise<any> {
+  async generatePart1(symptoms: any, generalDescription: string): Promise<any> {
     if (!this.useBridge) {
       console.log('Bridge API URL not configured, using mock data');
       return this.getMockPart1();
@@ -65,8 +94,8 @@ export class GeminiService {
     try {
       const url = `${this.bridgeApiUrl}/api/generate-part1`;
       const payload = { 
-        complaint,
-        selectedVariant: selectedVariant || complaint
+        symptoms,
+        generalDescription
       };
       
       console.log('=== Calling Bridge API for Part 1 ===');
@@ -74,7 +103,7 @@ export class GeminiService {
       console.log('Payload:', JSON.stringify(payload, null, 2));
       
       const response = await axios.post(url, payload, {
-        timeout: 60000, // 60 seconds timeout
+        timeout: 60000,
         headers: {
           'Content-Type': 'application/json'
         }
@@ -90,14 +119,13 @@ export class GeminiService {
       if (error.response) {
         console.error('Response status:', error.response.status);
         console.error('Response data:', JSON.stringify(error.response.data, null, 2));
-        console.error('Response headers:', JSON.stringify(error.response.headers, null, 2));
       }
       console.log('Falling back to mock data');
       return this.getMockPart1();
     }
   }
 
-  async generatePart2(complaint: string, part1Answers: any): Promise<any> {
+  async generatePart2(symptoms: any, generalDescription: string, part1Answers: any): Promise<any> {
     if (!this.useBridge) {
       console.log('Bridge API URL not configured, using mock data');
       return this.getMockPart2();
@@ -105,7 +133,7 @@ export class GeminiService {
     
     try {
       const url = `${this.bridgeApiUrl}/api/generate-part2`;
-      const payload = { complaint, answerspart1: part1Answers };
+      const payload = { symptoms, generalDescription, answersPart1: part1Answers };
       
       console.log('=== Calling Bridge API for Part 2 ===');
       console.log('URL:', url);
@@ -135,7 +163,44 @@ export class GeminiService {
     }
   }
 
-  async generateResults(complaint: string, part1Answers: any, part2Answers: any): Promise<any> {
+  async generatePart3(symptoms: any, generalDescription: string, part1Answers: any, part2Answers: any): Promise<any> {
+    if (!this.useBridge) {
+      console.log('Bridge API URL not configured, using mock data');
+      return [];
+    }
+    
+    try {
+      const url = `${this.bridgeApiUrl}/api/generate-part3`;
+      const payload = { symptoms, generalDescription, answersPart1: part1Answers, answersPart2: part2Answers };
+      
+      console.log('=== Calling Bridge API for Part 3 (Additional Tests) ===');
+      console.log('URL:', url);
+      console.log('Payload:', JSON.stringify(payload, null, 2));
+      
+      const response = await axios.post(url, payload, {
+        timeout: 60000,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      console.log('Bridge API Response Status:', response.status);
+      console.log('Response Data:', JSON.stringify(response.data, null, 2));
+      
+      return response.data.questions || [];
+    } catch (error: any) {
+      console.error('=== Error calling bridge API for part3 ===');
+      console.error('Error message:', error.message);
+      if (error.response) {
+        console.error('Response status:', error.response.status);
+        console.error('Response data:', JSON.stringify(error.response.data, null, 2));
+      }
+      console.log('Falling back to empty array');
+      return [];
+    }
+  }
+
+  async generateResults(symptoms: any, generalDescription: string, part1Answers: any, part2Answers: any, part3Answers?: any): Promise<any> {
     if (!this.useBridge) {
       console.log('Bridge API URL not configured, using mock data');
       return this.getMockResults();
@@ -143,7 +208,7 @@ export class GeminiService {
     
     try {
       const url = `${this.bridgeApiUrl}/api/generate-results`;
-      const payload = { complaint, answerspart1: part1Answers, answerspart2: part2Answers };
+      const payload = { symptoms, generalDescription, answersPart1: part1Answers, answersPart2: part2Answers, answersPart3: part3Answers };
       
       console.log('=== Calling Bridge API for Results ===');
       console.log('URL:', url);

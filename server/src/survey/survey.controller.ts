@@ -8,16 +8,22 @@ export class SurveyController {
   constructor(private surveyService: SurveyService) {}
 
   @Post('start')
-  async startSurvey(@Request() req: any, @Body() body: { complaint: string }) {
-    return this.surveyService.createSession(req.user.userId, body.complaint);
+  async startSurvey(@Request() req: any) {
+    return this.surveyService.createSession(req.user.userId);
   }
 
-  @Post(':id/select-variant')
-  async selectVariant(
+  @Post(':id/submit-symptoms')
+  async submitSymptoms(
     @Param('id', ParseIntPipe) id: number,
-    @Body() body: { selectedVariant: string }
+    @Body() body: { symptoms: any, generalDescription: string }
   ) {
-    return this.surveyService.selectVariant(id, body.selectedVariant);
+    return this.surveyService.submitSymptoms(id, body.symptoms, body.generalDescription);
+  }
+
+  @Get(':id/get-symptoms')
+  async getSymptoms(@Param('id', ParseIntPipe) id: number) {
+    const session = await this.surveyService.getSession(id);
+    return { symptoms: session.symptoms || [] };
   }
 
   @Post(':id/submit')

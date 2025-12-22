@@ -17,9 +17,9 @@ export const SurveyPage: React.FC = () => {
         const response = await axios.get(`/api/survey/${id}`);
         const session = response.data;
         
-        // Check if variants need to be selected
-        if (session.status === 'VARIANTS_PENDING') {
-          navigate(`/variants/${id}`);
+        // Check if symptoms need to be selected
+        if (session.status === 'SYMPTOMS_PENDING') {
+          navigate(`/symptoms/${id}`);
           return;
         }
 
@@ -33,7 +33,12 @@ export const SurveyPage: React.FC = () => {
 
         if (lastQ) {
             setQuestions(lastQ.questions);
-            setPart(lastQ.type);
+            const partMap: Record<string, string> = {
+              'PART1': 'Этап 1',
+              'PART2': 'Этап 2',
+              'PART3': 'Этап 3'
+            };
+            setPart(partMap[lastQ.type] || lastQ.type);
         }
       } catch (error) {
         console.error('Не удалось загрузить сессию', error);
@@ -71,7 +76,11 @@ export const SurveyPage: React.FC = () => {
       } else {
         setQuestions(response.data.questions);
         setAnswers({});
-        setPart('PART2');
+        const partMap: Record<string, string> = {
+          'PART2': 'Этап 2',
+          'PART3': 'Этап 3'
+        };
+        setPart(partMap[response.data.nextStep] || response.data.nextStep);
         window.scrollTo(0, 0);
       }
     } catch (error) {
@@ -95,9 +104,9 @@ export const SurveyPage: React.FC = () => {
         Назад
       </button>
       <div className="mb-8">
-        <span className="text-sm font-bold text-white/60 tracking-wider uppercase">{part === 'PART1' ? 'Этап 1' : 'Этап 2'}</span>
+        <span className="text-sm font-bold text-white/60 tracking-wider uppercase">{part}</span>
         <h2 className="text-3xl font-bold mt-2 text-white">
-            {part === 'PART1' ? 'Начальная оценка' : 'Углубленный анализ'}
+            {part === 'Этап 1' ? 'Первичный опросник' : part === 'Этап 2' ? 'Вторичный опросник' : part === 'Этап 3' ? 'Дополнительные тесты' : 'Опросник'}
         </h2>
       </div>
       

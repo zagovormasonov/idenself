@@ -9,52 +9,44 @@ export class SurveyService {
     private gemini: GeminiService,
   ) {}
 
-  async createSession(userId: number, complaint: string) {
-    // 1. Generate variants for user to select
-    const variants = await this.gemini.generateVariants(complaint);
+  async createSession(userId: number) {
+    // 1. Get symptoms list
+    const symptoms = await this.gemini.getSymptomsList();
 
     // 2. Create Session
     const session = await this.prisma.session.create({
       data: {
         userId,
-        complaint,
-        status: 'VARIANTS_PENDING',
+        status: 'SYMPTOMS_PENDING',
+        symptoms: symptoms,
       },
     });
 
-    // 3. Save Variants
-    await this.prisma.questionnaire.create({
-      data: {
-        sessionId: session.id,
-        type: 'VARIANTS',
-        questions: { variants },
-      },
-    });
-
-    return { sessionId: session.id, variants };
+    return { sessionId: session.id, symptoms };
   }
 
-  async selectVariant(sessionId: number, selectedVariant: string) {
+  async submitSymptoms(sessionId: number, symptomsData: any, generalDescription: string) {
     const session = await this.prisma.session.findUnique({
       where: { id: sessionId },
     });
 
     if (!session) throw new NotFoundException('Сессия не найдена');
-    if (session.status !== 'VARIANTS_PENDING') {
-      throw new NotFoundException('Вариант уже выбран');
+    if (session.status !== 'SYMPTOMS_PENDING') {
+      throw new NotFoundException('Симптомы уже отправлены');
     }
 
-    // Update session with selected variant
+    // Update session with symptoms data
     await this.prisma.session.update({
       where: { id: sessionId },
       data: { 
-        status: 'STARTED',
-        complaint: selectedVariant // Update complaint with selected variant
+        status: 'PART1_PENDING',
+        symptoms: symptomsData,
+        complaint: generalDescription || null,
       },
     });
 
-    // Generate Part 1 questions based on selected variant
-    const questions = await this.gemini.generatePart1(session.complaint, selectedVariant);
+    // Generate Part 1 questions based on symptoms
+    const questions = await this.gemini.generatePart1(symptomsData, generalDescription);
 
     // Save Part 1 questionnaire
     await this.prisma.questionnaire.create({
@@ -63,6 +55,11 @@ export class SurveyService {
         type: 'PART1',
         questions: questions,
       },
+    });
+
+    await this.prisma.session.update({
+      where: { id: sessionId },
+      data: { status: 'PART1_STARTED' },
     });
 
     return { questions };
@@ -76,8 +73,11 @@ export class SurveyService {
 
     if (!session) throw new NotFoundException('Сессия не найдена');
 
-    if (session.status === 'STARTED') {
-      // Find Part 1 questionnaire and save answers
+    const symptoms = session.symptoms as any;
+    const generalDescription = session.complaint || '';
+
+    if (session.status === 'PART1_STARTED') {
+      // Save Part 1 answers
       const q1 = session.questionnaires.find(q => q.type === 'PART1');
       if (q1) {
         await this.prisma.questionnaire.update({
@@ -87,7 +87,7 @@ export class SurveyService {
       }
 
       // Generate Part 2
-      const questionsPart2 = await this.gemini.generatePart2(session.complaint, answers);
+      const questionsPart2 = await this.gemini.generatePart2(symptoms, generalDescription, answers);
       
       await this.prisma.questionnaire.create({
         data: {
@@ -99,13 +99,13 @@ export class SurveyService {
 
       await this.prisma.session.update({
         where: { id: sessionId },
-        data: { status: 'PART1_COMPLETED' },
+        data: { status: 'PART2_STARTED' },
       });
 
       return { nextStep: 'PART2', questions: questionsPart2 };
 
-    } else if (session.status === 'PART1_COMPLETED') {
-       // Find Part 2 questionnaire and save answers
+    } else if (session.status === 'PART2_STARTED') {
+      // Save Part 2 answers
       const q2 = session.questionnaires.find(q => q.type === 'PART2');
       if (q2) {
         await this.prisma.questionnaire.update({
@@ -114,12 +114,66 @@ export class SurveyService {
         });
       }
 
-      // Generate Results
       // Get Part 1 answers for context
       const q1 = session.questionnaires.find(q => q.type === 'PART1');
       const part1Answers = q1?.answers;
 
-      const results = await this.gemini.generateResults(session.complaint, part1Answers, answers);
+      // Generate Part 3 (Additional Tests)
+      const questionsPart3 = await this.gemini.generatePart3(symptoms, generalDescription, part1Answers, answers);
+      
+      if (questionsPart3 && questionsPart3.length > 0) {
+        await this.prisma.questionnaire.create({
+          data: {
+            sessionId: session.id,
+            type: 'PART3',
+            questions: questionsPart3,
+          },
+        });
+
+        await this.prisma.session.update({
+          where: { id: sessionId },
+          data: { status: 'PART3_STARTED' },
+        });
+
+        return { nextStep: 'PART3', questions: questionsPart3 };
+      } else {
+        // No Part 3, generate results directly
+        const results = await this.gemini.generateResults(symptoms, generalDescription, part1Answers, answers);
+
+        await this.prisma.questionnaire.create({
+          data: {
+            sessionId: session.id,
+            type: 'RESULTS',
+            questions: results,
+          },
+        });
+
+        await this.prisma.session.update({
+          where: { id: sessionId },
+          data: { status: 'FINISHED' },
+        });
+
+        return { nextStep: 'FINISHED', results };
+      }
+
+    } else if (session.status === 'PART3_STARTED') {
+      // Save Part 3 answers
+      const q3 = session.questionnaires.find(q => q.type === 'PART3');
+      if (q3) {
+        await this.prisma.questionnaire.update({
+          where: { id: q3.id },
+          data: { answers },
+        });
+      }
+
+      // Get all previous answers
+      const q1 = session.questionnaires.find(q => q.type === 'PART1');
+      const q2 = session.questionnaires.find(q => q.type === 'PART2');
+      const part1Answers = q1?.answers;
+      const part2Answers = q2?.answers;
+
+      // Generate Results
+      const results = await this.gemini.generateResults(symptoms, generalDescription, part1Answers, part2Answers, answers);
 
       await this.prisma.questionnaire.create({
         data: {

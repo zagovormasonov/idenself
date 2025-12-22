@@ -3,16 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 export const ComplaintPage: React.FC = () => {
-  const [complaint, setComplaint] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async () => {
-    if (!complaint.trim()) return;
     setLoading(true);
     try {
-      const response = await axios.post('/api/survey/start', { complaint });
-      navigate(`/variants/${response.data.sessionId}`);
+      const response = await axios.post('/api/survey/start');
+      navigate(`/symptoms/${response.data.sessionId}`);
     } catch (error) {
       console.error('Не удалось начать опрос', error);
     } finally {
@@ -31,23 +29,17 @@ export const ComplaintPage: React.FC = () => {
         </svg>
         Назад
       </button>
-      <h2 className="text-4xl font-bold mb-6 text-white">Как вы себя чувствуете?</h2>
+      <h2 className="text-4xl font-bold mb-6 text-white">Начнем оценку</h2>
       <p className="mb-8 text-white/80 text-lg leading-relaxed">
-        Опишите своими словами жалобы, симптомы или то, что вас беспокоит. Чем больше деталей вы предоставите, тем лучше мы сможем вам помочь.
+        Мы поможем вам лучше понять свое состояние. На следующем этапе вы сможете выбрать симптомы и описать свои проблемы.
       </p>
-      <textarea
-        className="w-full h-64 p-6 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-white/50 focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-lg resize-none backdrop-blur-sm"
-        placeholder="Я чувствую себя..."
-        value={complaint}
-        onChange={(e) => setComplaint(e.target.value)}
-      />
       <div className="mt-8 flex justify-end">
         <button
           onClick={handleSubmit}
-          disabled={loading || !complaint.trim()}
+          disabled={loading}
           className="bg-white text-navy px-10 py-4 rounded-xl text-lg font-semibold hover:shadow-2xl hover:shadow-white/50 transition-all disabled:opacity-50 disabled:hover:shadow-none transform hover:scale-105 disabled:hover:scale-100"
         >
-          {loading ? 'Анализирую...' : 'Начать оценку'}
+          {loading ? 'Загрузка...' : 'Начать оценку'}
         </button>
       </div>
     </div>
