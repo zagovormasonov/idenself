@@ -36,6 +36,7 @@ npm start
 ## API Endpoints
 
 - `GET /health` - проверка работоспособности
+- `POST /api/generate-variants` - генерация кликабельных вариантов ответов на основе жалоб
 - `POST /api/generate-part1` - генерация первой части опросника
 - `POST /api/generate-part2` - генерация второй части опросника
 - `POST /api/generate-results` - генерация финальных результатов

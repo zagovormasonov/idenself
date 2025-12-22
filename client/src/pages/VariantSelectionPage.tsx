@@ -9,6 +9,7 @@ export const VariantSelectionPage: React.FC = () => {
   const [selectedVariant, setSelectedVariant] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string>('');
 
   useEffect(() => {
     const fetchVariants = async () => {
@@ -17,11 +18,14 @@ export const VariantSelectionPage: React.FC = () => {
         const session = response.data;
         const variantsQ = session.questionnaires.find((q: any) => q.type === 'VARIANTS');
         
-        if (variantsQ && variantsQ.questions?.variants) {
+        if (variantsQ && variantsQ.questions?.variants && Array.isArray(variantsQ.questions.variants) && variantsQ.questions.variants.length > 0) {
           setVariants(variantsQ.questions.variants);
+        } else {
+          setError('Варианты не были сгенерированы. Пожалуйста, попробуйте еще раз.');
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('Не удалось загрузить варианты', error);
+        setError('Не удалось загрузить варианты. Пожалуйста, попробуйте еще раз.');
       } finally {
         setLoading(false);
       }
@@ -42,14 +46,40 @@ export const VariantSelectionPage: React.FC = () => {
         selectedVariant
       });
       navigate(`/survey/${id}`);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Не удалось выбрать вариант', error);
+      setError(error.response?.data?.message || 'Не удалось выбрать вариант. Пожалуйста, попробуйте еще раз.');
     } finally {
       setSubmitting(false);
     }
   };
 
   if (loading) return <div className="text-center py-20 text-white text-xl">Генерирую варианты...</div>;
+
+  if (error || variants.length === 0) {
+    return (
+      <div className="max-w-3xl mx-auto py-12">
+        <button 
+          onClick={() => navigate(-1)} 
+          className="flex items-center text-white/60 hover:text-white mb-6 transition-colors group"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          Назад
+        </button>
+        <div className="bg-red-500/20 border border-red-500/50 rounded-2xl p-6 text-center">
+          <p className="text-white text-lg mb-4">{error || 'Варианты не были сгенерированы'}</p>
+          <button
+            onClick={() => navigate('/complaint')}
+            className="bg-white text-navy px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all"
+          >
+            Вернуться к описанию жалоб
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-3xl mx-auto py-12">
