@@ -29,12 +29,12 @@ export const SymptomsPage: React.FC = () => {
         const response = await axios.get(`/api/survey/${id}`);
         const session = response.data;
         
-        if (session.symptoms && session.symptoms.length > 0) {
+        if (session.symptoms && Array.isArray(session.symptoms) && session.symptoms.length > 0) {
           setSymptoms(session.symptoms);
         } else {
           // Получаем список симптомов от Gemini
-          const symptomsResponse = await axios.post(`/api/survey/${id}/get-symptoms`);
-          setSymptoms(symptomsResponse.data.symptoms);
+          const symptomsResponse = await axios.get(`/api/survey/${id}/get-symptoms`);
+          setSymptoms(symptomsResponse.data.symptoms || []);
         }
 
         // Загружаем сохраненные данные
