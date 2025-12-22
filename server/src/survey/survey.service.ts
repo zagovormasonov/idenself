@@ -78,7 +78,7 @@ export class SurveyService {
 
     if (session.status === 'PART1_STARTED') {
       // Save Part 1 answers
-      const q1 = session.questionnaires.find(q => q.type === 'PART1');
+      const q1 = session.questionnaires.find((q: any) => q.type === 'PART1');
       if (q1) {
         await this.prisma.questionnaire.update({
           where: { id: q1.id },
@@ -106,7 +106,7 @@ export class SurveyService {
 
     } else if (session.status === 'PART2_STARTED') {
       // Save Part 2 answers
-      const q2 = session.questionnaires.find(q => q.type === 'PART2');
+      const q2 = session.questionnaires.find((q: any) => q.type === 'PART2');
       if (q2) {
         await this.prisma.questionnaire.update({
           where: { id: q2.id },
@@ -115,7 +115,7 @@ export class SurveyService {
       }
 
       // Get Part 1 answers for context
-      const q1 = session.questionnaires.find(q => q.type === 'PART1');
+      const q1 = session.questionnaires.find((q: any) => q.type === 'PART1');
       const part1Answers = q1?.answers;
 
       // Generate Part 3 (Additional Tests)
@@ -138,7 +138,7 @@ export class SurveyService {
         return { nextStep: 'PART3', questions: questionsPart3 };
       } else {
         // No Part 3, generate results directly
-        const results = await this.gemini.generateResults(symptoms, generalDescription, part1Answers, answers);
+        const results = await this.gemini.generateResults(symptoms, generalDescription, part1Answers, answers, undefined);
 
         await this.prisma.questionnaire.create({
           data: {
@@ -158,7 +158,7 @@ export class SurveyService {
 
     } else if (session.status === 'PART3_STARTED') {
       // Save Part 3 answers
-      const q3 = session.questionnaires.find(q => q.type === 'PART3');
+      const q3 = session.questionnaires.find((q: any) => q.type === 'PART3');
       if (q3) {
         await this.prisma.questionnaire.update({
           where: { id: q3.id },
@@ -167,8 +167,8 @@ export class SurveyService {
       }
 
       // Get all previous answers
-      const q1 = session.questionnaires.find(q => q.type === 'PART1');
-      const q2 = session.questionnaires.find(q => q.type === 'PART2');
+      const q1 = session.questionnaires.find((q: any) => q.type === 'PART1');
+      const q2 = session.questionnaires.find((q: any) => q.type === 'PART2');
       const part1Answers = q1?.answers;
       const part2Answers = q2?.answers;
 
