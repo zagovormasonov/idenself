@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards, Request, Get, Param, ParseIntPipe } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Request, Get, Param, ParseIntPipe, NotFoundException } from '@nestjs/common';
 import { SurveyService } from './survey.service';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -23,6 +23,9 @@ export class SurveyController {
   @Get(':id/get-symptoms')
   async getSymptoms(@Param('id', ParseIntPipe) id: number) {
     const session = await this.surveyService.getSession(id);
+    if (!session) {
+      throw new NotFoundException('Сессия не найдена');
+    }
     return { symptoms: session.symptoms || [] };
   }
 
