@@ -46,12 +46,20 @@ export class SurveyService {
     });
 
     // Generate Part 1 questions based on symptoms
-    const questions = await this.gemini.generatePart1(symptomsData, generalDescription);
+    let questions = await this.gemini.generatePart1(symptomsData, generalDescription);
 
     // Проверяем, что вопросы были сгенерированы
     if (!questions || !Array.isArray(questions) || questions.length === 0) {
       throw new Error('Не удалось сгенерировать вопросы. Пожалуйста, попробуйте еще раз.');
     }
+
+    // Нормализуем вопросы: добавляем недостающие поля и исправляем типы
+    questions = questions.map((q: any, index: number) => ({
+      id: q.id || `q${index + 1}`,
+      text: q.text || 'Вопрос без текста',
+      type: q.type || 'text', // По умолчанию text, если тип не указан
+      options: q.type === 'choice' ? (Array.isArray(q.options) ? q.options : []) : (q.options || [])
+    }));
 
     // Save Part 1 questionnaire
     await this.prisma.questionnaire.create({
@@ -92,12 +100,20 @@ export class SurveyService {
       }
 
       // Generate Part 2
-      const questionsPart2 = await this.gemini.generatePart2(symptoms, generalDescription, answers);
+      let questionsPart2 = await this.gemini.generatePart2(symptoms, generalDescription, answers);
       
       // Проверяем, что вопросы были сгенерированы
       if (!questionsPart2 || !Array.isArray(questionsPart2) || questionsPart2.length === 0) {
         throw new Error('Не удалось сгенерировать вопросы для второй части. Пожалуйста, попробуйте еще раз.');
       }
+
+      // Нормализуем вопросы: добавляем недостающие поля и исправляем типы
+      questionsPart2 = questionsPart2.map((q: any, index: number) => ({
+        id: q.id || `q2_${index + 1}`,
+        text: q.text || 'Вопрос без текста',
+        type: q.type || 'text', // По умолчанию text, если тип не указан
+        options: q.type === 'choice' ? (Array.isArray(q.options) ? q.options : []) : (q.options || [])
+      }));
       
       await this.prisma.questionnaire.create({
         data: {
@@ -129,9 +145,16 @@ export class SurveyService {
       const part1Answers = q1?.answers;
 
       // Generate Part 3 (Additional Tests)
-      const questionsPart3 = await this.gemini.generatePart3(symptoms, generalDescription, part1Answers, answers);
+      let questionsPart3 = await this.gemini.generatePart3(symptoms, generalDescription, part1Answers, answers);
       
       if (questionsPart3 && Array.isArray(questionsPart3) && questionsPart3.length > 0) {
+        // Нормализуем вопросы: добавляем недостающие поля и исправляем типы
+        questionsPart3 = questionsPart3.map((q: any, index: number) => ({
+          id: q.id || `q3_${index + 1}`,
+          text: q.text || 'Вопрос без текста',
+          type: q.type || 'text', // По умолчанию text, если тип не указан
+          options: q.type === 'choice' ? (Array.isArray(q.options) ? q.options : []) : (q.options || [])
+        }));
         await this.prisma.questionnaire.create({
           data: {
             sessionId: session.id,
