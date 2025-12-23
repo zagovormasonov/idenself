@@ -187,7 +187,9 @@ export const SymptomsPage: React.FC = () => {
             <div className="mb-6">
               <h4 className="text-white font-semibold mb-3">Уточнения:</h4>
               <div className="space-y-2">
-                {symptoms.find(s => s.id === activePopup)?.clarifications.map((clarification) => {
+                {(() => {
+                  const activeSymptom = symptoms.find(s => s.id === activePopup);
+                  return activeSymptom?.clarifications && Array.isArray(activeSymptom.clarifications) ? activeSymptom.clarifications.map((clarification) => {
                   const isSelected = selectedSymptoms[activePopup]?.clarifications.includes(clarification);
                   return (
                     <label
@@ -207,7 +209,10 @@ export const SymptomsPage: React.FC = () => {
                       <span className="text-white">{clarification}</span>
                     </label>
                   );
-                })}
+                }) : (
+                  <div className="text-white/60 text-sm">Нет доступных уточнений</div>
+                );
+                })()}
               </div>
             </div>
 

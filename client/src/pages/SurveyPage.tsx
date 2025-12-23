@@ -130,7 +130,7 @@ export const SurveyPage: React.FC = () => {
             
             {q.type === 'choice' && (
               <div className="space-y-3">
-                {q.options.map((opt: string) => (
+                {q.options && Array.isArray(q.options) ? q.options.map((opt: string) => (
                   <label key={opt} className="flex items-center space-x-3 cursor-pointer p-3 hover:bg-white/10 rounded-lg transition-all">
                     <input
                       type="radio"
@@ -142,7 +142,7 @@ export const SurveyPage: React.FC = () => {
                     />
                     <span className="text-white/90">{opt}</span>
                   </label>
-                ))}
+                )) : null}
               </div>
             )}
 
@@ -164,16 +164,20 @@ export const SurveyPage: React.FC = () => {
                  </div>
             )}
           </div>
-        ))}
+        )) : (
+          <div className="text-center py-12 text-white/60">
+            Вопросы загружаются...
+          </div>
+        )}
       </div>
 
       <div className="mt-12 flex justify-between items-center">
         <div className="text-white/60 text-sm">
-          Отвечено: {Object.keys(answers).length} из {questions.length}
+          Отвечено: {Object.keys(answers).length} из {questions?.length || 0}
         </div>
         <button
           onClick={handleSubmit}
-          disabled={submitting || Object.keys(answers).length < questions.length}
+          disabled={submitting || !questions || Object.keys(answers).length < questions.length}
           className="bg-white text-navy px-10 py-4 rounded-xl text-lg font-semibold hover:shadow-2xl hover:shadow-white/50 transition-all disabled:opacity-50 disabled:hover:shadow-none transform hover:scale-105 disabled:hover:scale-100"
         >
           {submitting ? 'Обработка...' : 'Продолжить'}
