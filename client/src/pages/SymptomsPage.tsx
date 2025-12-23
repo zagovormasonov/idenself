@@ -134,7 +134,57 @@ export const SymptomsPage: React.FC = () => {
     }
   };
 
-  if (loading) return <div className="text-center py-20 text-white text-xl">Загрузка...</div>;
+  if (loading) return <div className="text-center py-20 text-white text-xl">Загрузка симптомов...</div>;
+
+  if (error) {
+    return (
+      <div className="max-w-3xl mx-auto py-12">
+        <button 
+          onClick={() => navigate(-1)} 
+          className="flex items-center text-white/60 hover:text-white mb-6 transition-colors group"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          Назад
+        </button>
+        <div className="bg-red-500/20 border border-red-500/50 rounded-2xl p-6 text-center">
+          <p className="text-white text-lg mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="bg-white text-navy px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all"
+          >
+            Обновить страницу
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!symptoms || symptoms.length === 0) {
+    return (
+      <div className="max-w-3xl mx-auto py-12">
+        <button 
+          onClick={() => navigate(-1)} 
+          className="flex items-center text-white/60 hover:text-white mb-6 transition-colors group"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          Назад
+        </button>
+        <div className="bg-yellow-500/20 border border-yellow-500/50 rounded-2xl p-6 text-center">
+          <p className="text-white text-lg mb-4">Список симптомов пуст. Пожалуйста, обновите страницу.</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="bg-white text-navy px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all"
+          >
+            Обновить страницу
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const selectedCount = Object.keys(selectedSymptoms).length;
 
