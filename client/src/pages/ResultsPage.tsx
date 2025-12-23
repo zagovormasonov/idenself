@@ -14,21 +14,40 @@ export const ResultsPage: React.FC = () => {
       try {
         const response = await axios.get(`/api/survey/${id}`);
         const session = response.data;
-        const resultQ = session.questionnaires.find((q: any) => q.type === 'RESULTS');
-        if (resultQ) {
+        const resultQ = session.questionnaires?.find((q: any) => q.type === 'RESULTS');
+        if (resultQ && resultQ.questions) {
           setResults(resultQ.questions);
+        } else {
+          console.error('Results questionnaire not found or empty');
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('Не удалось загрузить результаты', error);
+        if (error.response?.status === 404) {
+          navigate('/complaint');
+        }
       } finally {
         setLoading(false);
       }
     };
     fetchResults();
-  }, [id]);
+  }, [id, navigate]);
 
   if (loading) return <div className="text-center py-20 text-white text-xl">Анализ загружается...</div>;
-  if (!results) return <div className="text-center py-20 text-white text-xl">Результаты не найдены.</div>;
+  if (!results) {
+    return (
+      <div className="max-w-4xl mx-auto py-12">
+        <div className="bg-yellow-500/20 border border-yellow-500/50 rounded-2xl p-6 text-center">
+          <p className="text-white text-lg mb-4">Результаты не найдены. Возможно, анализ еще не завершен.</p>
+          <button
+            onClick={() => navigate('/complaint')}
+            className="bg-white text-navy px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all"
+          >
+            Начать заново
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const tabLabels: Record<string, string> = {
     plan: 'Личный план',

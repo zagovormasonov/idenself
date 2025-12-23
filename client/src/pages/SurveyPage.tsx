@@ -17,14 +17,18 @@ export const SurveyPage: React.FC = () => {
         const response = await axios.get(`/api/survey/${id}`);
         const session = response.data;
         
+        console.log('Session data:', session);
+        
         // Check if symptoms need to be selected
         if (session.status === 'SYMPTOMS_PENDING' || !session.questionnaires || session.questionnaires.length === 0) {
+          console.log('Redirecting to symptoms - status:', session.status, 'questionnaires:', session.questionnaires);
           navigate(`/symptoms/${id}`);
           return;
         }
 
         // Determine state
         const lastQ = session.questionnaires[session.questionnaires.length - 1];
+        console.log('Last questionnaire:', lastQ);
         
         if (session.status === 'FINISHED' || (lastQ && lastQ.type === 'RESULTS')) {
             navigate(`/results/${id}`);
@@ -32,22 +36,25 @@ export const SurveyPage: React.FC = () => {
         }
 
         if (lastQ && lastQ.questions) {
-            console.log('Loaded questions:', lastQ.questions);
-            if (Array.isArray(lastQ.questions)) {
-              setQuestions(lastQ.questions);
-              const partMap: Record<string, string> = {
-                'PART1': 'Этап 1',
-                'PART2': 'Этап 2',
-                'PART3': 'Этап 3'
-              };
-              setPart(partMap[lastQ.type] || lastQ.type);
-            } else {
-              console.error('Questions is not an array:', lastQ.questions);
+            // Проверяем, что questions - это массив и он не пустой
+            const questionsArray = Array.isArray(lastQ.questions) ? lastQ.questions : [];
+            if (questionsArray.length === 0) {
+              console.error('Questions array is empty');
+              alert('Вопросы не были сгенерированы. Пожалуйста, попробуйте еще раз.');
               navigate(`/symptoms/${id}`);
+              return;
             }
+            setQuestions(questionsArray);
+            const partMap: Record<string, string> = {
+              'PART1': 'Этап 1',
+              'PART2': 'Этап 2',
+              'PART3': 'Этап 3'
+            };
+            setPart(partMap[lastQ.type] || lastQ.type);
         } else {
           // No questions available, redirect to symptoms
-          console.log('No questions available, redirecting to symptoms');
+          console.error('No questions found in last questionnaire');
+          alert('Вопросы не найдены. Перенаправляем на выбор симптомов...');
           navigate(`/symptoms/${id}`);
         }
       } catch (error: any) {
@@ -62,6 +69,8 @@ export const SurveyPage: React.FC = () => {
           navigate('/complaint');
           return;
         }
+        // Другие ошибки
+        alert('Не удалось загрузить данные. Попробуйте обновить страницу.');
       } finally {
         setLoading(false);
       }
@@ -75,11 +84,6 @@ export const SurveyPage: React.FC = () => {
 
   const handleSubmit = async () => {
     // Validate that all questions are answered
-    if (!questions || !Array.isArray(questions) || questions.length === 0) {
-      alert('Вопросы не загружены. Попробуйте обновить страницу.');
-      return;
-    }
-
     const unansweredQuestions = questions.filter((q: any) => {
       const answer = answers[q.id];
       if (q.type === 'text') {
@@ -99,22 +103,22 @@ export const SurveyPage: React.FC = () => {
       if (response.data.nextStep === 'FINISHED') {
         navigate(`/results/${id}`);
       } else {
-        if (response.data.questions && Array.isArray(response.data.questions)) {
-          setQuestions(response.data.questions);
-          setAnswers({});
-          const partMap: Record<string, string> = {
-            'PART2': 'Этап 2',
-            'PART3': 'Этап 3'
-          };
-          setPart(partMap[response.data.nextStep] || response.data.nextStep);
-          window.scrollTo(0, 0);
-        } else {
-          console.error('Invalid questions data received:', response.data);
-          alert('Получены некорректные данные вопросов. Попробуйте еще раз.');
-        }
+        setQuestions(response.data.questions);
+        setAnswers({});
+        const partMap: Record<string, string> = {
+          'PART2': 'Этап 2',
+          'PART3': 'Этап 3'
+        };
+        setPart(partMap[response.data.nextStep] || response.data.nextStep);
+        window.scrollTo(0, 0);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Не удалось отправить ответы', error);
+      const errorMessage = error.response?.data?.message || 
+                          error.response?.data?.error || 
+                          error.message || 
+                          'Не удалось отправить ответы. Попробуйте еще раз.';
+      alert(errorMessage);
     } finally {
       setSubmitting(false);
     }
@@ -136,7 +140,13 @@ export const SurveyPage: React.FC = () => {
           Назад
         </button>
         <div className="bg-yellow-500/20 border border-yellow-500/50 rounded-2xl p-6 text-center">
-          <p className="text-white text-lg mb-4">Вопросы не загружены. Перенаправляем на выбор симптомов...</p>
+          <p className="text-white text-lg mb-4">Вопросы не загружены. Возможно, произошла ошибка при генерации вопросов.</p>
+          <button
+            onClick={() => navigate(`/symptoms/${id}`)}
+            className="bg-white text-navy px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all mt-4"
+          >
+            Вернуться к выбору симптомов
+          </button>
         </div>
       </div>
     );

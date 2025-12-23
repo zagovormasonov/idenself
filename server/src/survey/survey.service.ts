@@ -48,6 +48,11 @@ export class SurveyService {
     // Generate Part 1 questions based on symptoms
     const questions = await this.gemini.generatePart1(symptomsData, generalDescription);
 
+    // Проверяем, что вопросы были сгенерированы
+    if (!questions || !Array.isArray(questions) || questions.length === 0) {
+      throw new Error('Не удалось сгенерировать вопросы. Пожалуйста, попробуйте еще раз.');
+    }
+
     // Save Part 1 questionnaire
     await this.prisma.questionnaire.create({
       data: {

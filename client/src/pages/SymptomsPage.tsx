@@ -121,15 +121,26 @@ export const SymptomsPage: React.FC = () => {
 
     setSubmitting(true);
     try {
-      await axios.post(`/api/survey/${id}/submit-symptoms`, {
+      const response = await axios.post(`/api/survey/${id}/submit-symptoms`, {
         symptoms: selectedSymptoms,
         generalDescription: generalDescription.trim()
       });
-      navigate(`/survey/${id}`);
-    } catch (error) {
+      
+      // Проверяем, что ответ успешный
+      if (response.status === 200 || response.status === 201) {
+        // Небольшая задержка для завершения обработки на сервере
+        await new Promise(resolve => setTimeout(resolve, 500));
+        navigate(`/survey/${id}`);
+      } else {
+        throw new Error('Неожиданный ответ от сервера');
+      }
+    } catch (error: any) {
       console.error('Не удалось сохранить симптомы', error);
-      alert('Не удалось сохранить данные. Попробуйте еще раз.');
-    } finally {
+      const errorMessage = error.response?.data?.message || 
+                          error.response?.data?.error || 
+                          error.message || 
+                          'Не удалось сохранить данные. Попробуйте еще раз.';
+      alert(errorMessage);
       setSubmitting(false);
     }
   };
