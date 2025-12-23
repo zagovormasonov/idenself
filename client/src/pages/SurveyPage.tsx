@@ -100,9 +100,22 @@ export const SurveyPage: React.FC = () => {
     setSubmitting(true);
     try {
       const response = await axios.post(`/api/survey/${id}/submit`, { answers });
+      
+      console.log('Submit response:', response.data);
+      
       if (response.data.nextStep === 'FINISHED') {
         navigate(`/results/${id}`);
       } else {
+        // Проверяем, что questions существует и это массив
+        if (!response.data.questions || !Array.isArray(response.data.questions)) {
+          throw new Error('Сервер вернул некорректные данные. Попробуйте еще раз.');
+        }
+        
+        // Проверяем, что массив не пустой
+        if (response.data.questions.length === 0) {
+          throw new Error('Вопросы не были сгенерированы. Попробуйте еще раз.');
+        }
+        
         setQuestions(response.data.questions);
         setAnswers({});
         const partMap: Record<string, string> = {
@@ -119,6 +132,7 @@ export const SurveyPage: React.FC = () => {
                           error.message || 
                           'Не удалось отправить ответы. Попробуйте еще раз.';
       alert(errorMessage);
+      // Не сбрасываем submitting, чтобы пользователь мог попробовать еще раз
     } finally {
       setSubmitting(false);
     }

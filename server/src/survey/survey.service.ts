@@ -94,6 +94,11 @@ export class SurveyService {
       // Generate Part 2
       const questionsPart2 = await this.gemini.generatePart2(symptoms, generalDescription, answers);
       
+      // Проверяем, что вопросы были сгенерированы
+      if (!questionsPart2 || !Array.isArray(questionsPart2) || questionsPart2.length === 0) {
+        throw new Error('Не удалось сгенерировать вопросы для второй части. Пожалуйста, попробуйте еще раз.');
+      }
+      
       await this.prisma.questionnaire.create({
         data: {
           sessionId: session.id,
@@ -126,7 +131,7 @@ export class SurveyService {
       // Generate Part 3 (Additional Tests)
       const questionsPart3 = await this.gemini.generatePart3(symptoms, generalDescription, part1Answers, answers);
       
-      if (questionsPart3 && questionsPart3.length > 0) {
+      if (questionsPart3 && Array.isArray(questionsPart3) && questionsPart3.length > 0) {
         await this.prisma.questionnaire.create({
           data: {
             sessionId: session.id,
@@ -144,6 +149,11 @@ export class SurveyService {
       } else {
         // No Part 3, generate results directly
         const results = await this.gemini.generateResults(symptoms, generalDescription, part1Answers, answers, undefined);
+        
+        // Проверяем, что результаты были сгенерированы
+        if (!results || typeof results !== 'object') {
+          throw new Error('Не удалось сгенерировать результаты. Пожалуйста, попробуйте еще раз.');
+        }
 
         await this.prisma.questionnaire.create({
           data: {
@@ -179,6 +189,11 @@ export class SurveyService {
 
       // Generate Results
       const results = await this.gemini.generateResults(symptoms, generalDescription, part1Answers, part2Answers, answers);
+      
+      // Проверяем, что результаты были сгенерированы
+      if (!results || typeof results !== 'object') {
+        throw new Error('Не удалось сгенерировать результаты. Пожалуйста, попробуйте еще раз.');
+      }
 
       await this.prisma.questionnaire.create({
         data: {

@@ -132,7 +132,7 @@ app.post('/api/generate-part1', async (req, res) => {
     }
 
     // Format symptoms data for prompt
-    const symptomsText = Object.entries(symptoms || {}).map(([symptomId, data]: [string, any]) => {
+    const symptomsText = Object.entries(symptoms || {}).map(([symptomId, data]) => {
       const symptomName = symptomId; // You might want to get actual name from symptoms list
       const clarifications = data.clarifications?.join(', ') || '';
       const customText = data.customText || '';
@@ -270,9 +270,25 @@ ${answersText}
 
     try {
       const parsedResponse = JSON.parse(text);
+      
+      // Проверяем, что есть questions и это массив
+      if (!parsedResponse.questions || !Array.isArray(parsedResponse.questions)) {
+        console.error('Invalid response format - questions missing or not an array:', parsedResponse);
+        res.status(500).json({ error: 'Invalid response format from AI', details: 'Questions array is missing or invalid' });
+        return;
+      }
+      
+      // Проверяем, что массив не пустой
+      if (parsedResponse.questions.length === 0) {
+        console.error('Empty questions array from AI');
+        res.status(500).json({ error: 'AI generated empty questions array', details: 'No questions were generated' });
+        return;
+      }
+      
       res.json(parsedResponse);
     } catch (parseError) {
       console.error('Failed to parse Gemini response:', text);
+      console.error('Parse error:', parseError);
       res.status(500).json({ error: 'Failed to parse AI response', details: text });
     }
   } catch (error) {
@@ -355,7 +371,7 @@ app.post('/api/generate-results', async (req, res) => {
       .map(([qId, answer]) => `${qId}: ${JSON.stringify(answer)}`)
       .join('\n') : '';
 
-    const symptomsText = symptoms ? Object.entries(symptoms).map(([id, data]: [string, any]) => {
+    const symptomsText = symptoms ? Object.entries(symptoms).map(([id, data]) => {
       return `${id}: ${data.clarifications?.join(', ') || ''} ${data.customText || ''}`;
     }).join('\n') : '';
 
