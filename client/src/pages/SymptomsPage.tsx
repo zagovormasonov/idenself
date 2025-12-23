@@ -162,7 +162,11 @@ export const SymptomsPage: React.FC = () => {
               )}
             </button>
           );
-        })}
+        }) : (
+          <div className="col-span-2 text-center py-12 text-white/60">
+            Симптомы загружаются...
+          </div>
+        )}
       </div>
 
       {/* Попап для уточнений симптома */}
