@@ -75,10 +75,10 @@ export const Layout: React.FC = () => {
 
         {/* Mobile Menu */}
         <div
-          className={`absolute top-full left-0 right-0 bg-navy/95 backdrop-blur-xl border-b border-white/10 sm:hidden z-50 transition-all duration-300 ease-in-out ${
+          className={`absolute top-full left-0 right-0 bg-navy/95 backdrop-blur-2xl border-b border-white/10 sm:hidden z-50 transition-all duration-300 ease-in-out ${
             mobileMenuOpen
-              ? 'opacity-100 translate-y-0'
-              : 'opacity-0 -translate-y-4 pointer-events-none'
+              ? 'opacity-100 translate-y-0 visible'
+              : 'opacity-0 -translate-y-4 invisible pointer-events-none'
           }`}
         >
           <div className="flex flex-col p-4 space-y-4">
