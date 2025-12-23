@@ -8,6 +8,7 @@ import { ComplaintPage } from './pages/ComplaintPage';
 import { SymptomsPage } from './pages/SymptomsPage';
 import { SurveyPage } from './pages/SurveyPage';
 import { ResultsPage } from './pages/ResultsPage';
+import { ProfilePage } from './pages/ProfilePage';
 
 // Placeholder for other pages
 const HomePage = () => (
@@ -46,9 +47,10 @@ function App() {
             <Route path="login" element={<LoginPage />} />
             <Route path="register" element={<RegisterPage />} />
             <Route path="complaint" element={<ComplaintPage />} />
-            <Route path="symptoms/:id" element={<SymptomsPage />} />
-            <Route path="survey/:id" element={<SurveyPage />} />
-            <Route path="results/:id" element={<ResultsPage />} />
+          <Route path="symptoms/:id" element={<SymptomsPage />} />
+          <Route path="survey/:id" element={<SurveyPage />} />
+          <Route path="results/:id" element={<ResultsPage />} />
+          <Route path="profile" element={<ProfilePage />} />
           </Route>
         </Routes>
       </Router>

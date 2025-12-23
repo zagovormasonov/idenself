@@ -18,6 +18,7 @@ export const Layout: React.FC = () => {
         <nav>
             {user ? (
                 <div className="flex items-center gap-6">
+                    <Link to="/profile" className="text-sm font-medium text-white/80 hover:text-white transition-colors hidden sm:block">Личный кабинет</Link>
                     <span className="text-sm font-medium text-white/80 hidden sm:block">{user.email}</span>
                     <button onClick={handleLogout} className="text-sm font-medium text-white/80 hover:text-white transition-colors">Выйти</button>
                 </div>

@@ -243,5 +243,27 @@ export class SurveyService {
           include: { questionnaires: true }
       });
   }
+
+  async getUserCompletedSessions(userId: number) {
+    return this.prisma.session.findMany({
+      where: {
+        userId,
+        status: 'FINISHED'
+      },
+      include: {
+        questionnaires: {
+          where: {
+            type: 'RESULTS'
+          },
+          orderBy: {
+            createdAt: 'desc'
+          }
+        }
+      },
+      orderBy: {
+        updatedAt: 'desc'
+      }
+    });
+  }
 }
 

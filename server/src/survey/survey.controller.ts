@@ -41,5 +41,10 @@ export class SurveyController {
   async getSession(@Param('id', ParseIntPipe) id: number) {
       return this.surveyService.getSession(id);
   }
+
+  @Get('user/completed')
+  async getUserCompletedSessions(@Request() req: any) {
+    return this.surveyService.getUserCompletedSessions(req.user.userId);
+  }
 }
 
