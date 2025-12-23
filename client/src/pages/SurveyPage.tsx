@@ -44,6 +44,11 @@ export const SurveyPage: React.FC = () => {
               navigate(`/symptoms/${id}`);
               return;
             }
+            // Логируем структуру вопросов для отладки
+            console.log('Questions structure:', questionsArray);
+            questionsArray.forEach((q: any, index: number) => {
+              console.log(`Question ${index}:`, { id: q.id, text: q.text, type: q.type, options: q.options });
+            });
             setQuestions(questionsArray);
             const partMap: Record<string, string> = {
               'PART1': 'Этап 1',
@@ -185,57 +190,83 @@ export const SurveyPage: React.FC = () => {
       </div>
       
       <div className="space-y-6">
-        {questions && Array.isArray(questions) && questions.length > 0 && questions.map((q: any) => (
-          <div key={q.id} className="bg-white/5 backdrop-blur-sm p-6 rounded-2xl border border-white/10">
-            <label className="block text-lg font-medium text-white mb-4">{q.text}</label>
-            
-            {q.type === 'text' && (
-              <textarea
-                className="w-full p-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
-                rows={3}
-                value={answers[q.id] || ''}
-                onChange={(e) => handleAnswerChange(q.id, e.target.value)}
-                placeholder="Ваш ответ..."
-              />
-            )}
-            
-            {q.type === 'choice' && (
-              <div className="space-y-3">
-                {q.options && Array.isArray(q.options) ? q.options.map((opt: string) => (
-                  <label key={opt} className="flex items-center space-x-3 cursor-pointer p-3 hover:bg-white/10 rounded-lg transition-all">
-                    <input
-                      type="radio"
-                      name={q.id}
-                      value={opt}
-                      checked={answers[q.id] === opt}
-                      onChange={(e) => handleAnswerChange(q.id, e.target.value)}
-                      className="text-primary focus:ring-primary h-5 w-5"
-                    />
-                    <span className="text-white/90">{opt}</span>
-                  </label>
-                )) : null}
-              </div>
-            )}
+        {questions && Array.isArray(questions) && questions.length > 0 && questions.map((q: any) => {
+          // Определяем тип вопроса (с fallback на 'text' если тип не указан)
+          const questionType = q.type || 'text';
+          
+          return (
+            <div key={q.id || `q-${Math.random()}`} className="bg-white/5 backdrop-blur-sm p-6 rounded-2xl border border-white/10">
+              <label className="block text-lg font-medium text-white mb-4">{q.text || 'Вопрос без текста'}</label>
+              
+              {questionType === 'text' && (
+                <textarea
+                  className="w-full p-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+                  rows={3}
+                  value={answers[q.id] || ''}
+                  onChange={(e) => handleAnswerChange(q.id, e.target.value)}
+                  placeholder="Ваш ответ..."
+                />
+              )}
+              
+              {questionType === 'choice' && (
+                <div className="space-y-3">
+                  {q.options && Array.isArray(q.options) && q.options.length > 0 ? (
+                    q.options.map((opt: string) => (
+                      <label key={opt} className="flex items-center space-x-3 cursor-pointer p-3 hover:bg-white/10 rounded-lg transition-all">
+                        <input
+                          type="radio"
+                          name={q.id}
+                          value={opt}
+                          checked={answers[q.id] === opt}
+                          onChange={(e) => handleAnswerChange(q.id, e.target.value)}
+                          className="text-primary focus:ring-primary h-5 w-5"
+                        />
+                        <span className="text-white/90">{opt}</span>
+                      </label>
+                    ))
+                  ) : (
+                    <div className="text-white/60 text-sm">Варианты ответов не загружены</div>
+                  )}
+                </div>
+              )}
 
-            {q.type === 'scale' && (
-                 <div className="flex justify-between items-center mt-4">
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
-                        <button
-                            key={num}
-                            onClick={() => handleAnswerChange(q.id, num)}
-                            className={`w-10 h-10 rounded-full font-medium transition-all ${
-                                answers[q.id] === num 
-                                ? 'bg-white text-navy shadow-lg transform scale-110' 
-                                : 'bg-white/20 text-white/70 hover:bg-white/30'
-                            }`}
-                        >
-                            {num}
-                        </button>
-                    ))}
-                 </div>
-            )}
-          </div>
-        ))}
+              {questionType === 'scale' && (
+                <div className="flex justify-between items-center mt-4 flex-wrap gap-2">
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
+                    <button
+                      key={num}
+                      type="button"
+                      onClick={() => handleAnswerChange(q.id, num)}
+                      className={`w-10 h-10 rounded-full font-medium transition-all ${
+                        answers[q.id] === num 
+                          ? 'bg-white text-navy shadow-lg transform scale-110' 
+                          : 'bg-white/20 text-white/70 hover:bg-white/30'
+                      }`}
+                    >
+                      {num}
+                    </button>
+                  ))}
+                </div>
+              )}
+              
+              {/* Fallback для неизвестных типов - показываем текстовое поле */}
+              {questionType !== 'text' && questionType !== 'choice' && questionType !== 'scale' && (
+                <div>
+                  <div className="text-yellow-500/80 text-sm mb-2">
+                    Неизвестный тип вопроса: {questionType}. Используется текстовое поле.
+                  </div>
+                  <textarea
+                    className="w-full p-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+                    rows={3}
+                    value={answers[q.id] || ''}
+                    onChange={(e) => handleAnswerChange(q.id, e.target.value)}
+                    placeholder="Ваш ответ..."
+                  />
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
 
       <div className="mt-12 flex justify-between items-center">
