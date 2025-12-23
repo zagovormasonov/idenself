@@ -29,8 +29,7 @@
 | Key | Value |
 |-----|-------|
 | `GEMINI_API_KEY` | Ваш API ключ от Google Gemini AI |
-| `SUPABASE_URL` | URL вашей Supabase базы данных |
-| `SUPABASE_ANON_KEY` | Анонимный ключ Supabase |
+| `DATABASE_URL` | Строка подключения к PostgreSQL (например: `postgresql://user:password@host:5432/dbname`) |
 
 > **Где взять GEMINI_API_KEY:**
 > 1. Перейдите на https://makersuite.google.com/app/apikey
