@@ -29,6 +29,8 @@
 | Key | Value |
 |-----|-------|
 | `GEMINI_API_KEY` | Ваш API ключ от Google Gemini AI |
+| `SUPABASE_URL` | URL вашей Supabase базы данных |
+| `SUPABASE_ANON_KEY` | Анонимный ключ Supabase |
 
 > **Где взять GEMINI_API_KEY:**
 > 1. Перейдите на https://makersuite.google.com/app/apikey
