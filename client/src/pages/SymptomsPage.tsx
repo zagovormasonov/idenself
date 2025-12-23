@@ -267,7 +267,7 @@ export const SymptomsPage: React.FC = () => {
               <div className="space-y-2">
                 {(() => {
                   const activeSymptom = symptoms.find(s => s.id === activePopup);
-                  return activeSymptom?.clarifications && Array.isArray(activeSymptom.clarifications) ? activeSymptom.clarifications.map((clarification) => {
+                  return activeSymptom?.clarifications && Array.isArray(activeSymptom.clarifications) && activeSymptom.clarifications.length > 0 ? activeSymptom.clarifications.map((clarification) => {
                   const isSelected = selectedSymptoms[activePopup]?.clarifications.includes(clarification);
                   return (
                     <label

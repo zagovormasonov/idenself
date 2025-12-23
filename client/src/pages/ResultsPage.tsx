@@ -83,7 +83,7 @@ export const ResultsPage: React.FC = () => {
                     {results.specialistDoc}
                 </div>
                 
-                {results.recommendedTests && (
+                {results.recommendedTests && Array.isArray(results.recommendedTests) && results.recommendedTests.length > 0 && (
                     <div className="mt-8 pt-8 border-t border-white/10">
                         <h3 className="text-xl font-bold mb-6 text-white">Рекомендованные тесты</h3>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
