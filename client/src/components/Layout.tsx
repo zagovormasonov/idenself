@@ -74,9 +74,14 @@ export const Layout: React.FC = () => {
         </button>
 
         {/* Mobile Menu */}
-        {mobileMenuOpen && (
-          <div className="absolute top-full left-0 right-0 bg-navy/95 backdrop-blur-xl border-b border-white/10 sm:hidden z-50">
-            <div className="flex flex-col p-4 space-y-4">
+        <div
+          className={`absolute top-full left-0 right-0 bg-navy/95 backdrop-blur-xl border-b border-white/10 sm:hidden z-50 transition-all duration-300 ease-in-out ${
+            mobileMenuOpen
+              ? 'opacity-100 translate-y-0'
+              : 'opacity-0 -translate-y-4 pointer-events-none'
+          }`}
+        >
+          <div className="flex flex-col p-4 space-y-4">
               {user ? (
                 <>
                   <div className="pb-3 border-b border-white/10">
@@ -115,9 +120,8 @@ export const Layout: React.FC = () => {
                   </Link>
                 </>
               )}
-            </div>
           </div>
-        )}
+        </div>
       </header>
       <main className="flex-grow p-6 container mx-auto max-w-5xl">
         <Outlet />
