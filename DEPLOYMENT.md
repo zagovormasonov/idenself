@@ -29,7 +29,6 @@
 | Key | Value |
 |-----|-------|
 | `GEMINI_API_KEY` | Ваш API ключ от Google Gemini AI |
-| `DATABASE_URL` | Строка подключения к PostgreSQL (например: `postgresql://user:password@host:5432/dbname`) |
 
 > **Где взять GEMINI_API_KEY:**
 > 1. Перейдите на https://makersuite.google.com/app/apikey
@@ -59,46 +58,6 @@ https://your-bridge-url.onrender.com/health
 
 ---
 
-## Часть 1.5: Развертывание NestJS сервера на Render.com
-
-### Шаг 1: Создание второго Web Service для NestJS сервера
-1. В панели Render нажмите **"New +"** → **"Web Service"**
-2. Выберите ваш GitHub репозиторий `zagovormasonov/idenself`
-3. Дайте разрешение Render на доступ к репозиторию
-
-### Шаг 2: Настройка Web Service
-Заполните следующие поля:
-
-- **Name**: `idenself-server` (или любое другое имя)
-- **Region**: `Frankfurt (EU Central)`
-- **Branch**: `main`
-- **Root Directory**: `server`
-- **Runtime**: `Node`
-- **Build Command**: `npm install && npx prisma generate`
-- **Start Command**: `npm run start:prod`
-- **Instance Type**: `Free`
-
-### Шаг 3: Добавление переменных окружения
-В разделе **Environment Variables** добавьте:
-
-| Key | Value |
-|-----|-------|
-| `DATABASE_URL` | Ваша PostgreSQL строка подключения |
-| `JWT_SECRET` | Случайная строка для JWT токенов |
-| `BRIDGE_API_URL` | URL вашего Bridge API (например: `https://idenself-bridge-xxxx.onrender.com`) |
-| `PORT` | `3000` |
-
-### Шаг 4: Деплой NestJS сервера
-1. Нажмите **"Create Web Service"**
-2. Дождитесь завершения деплоя
-3. Скопируйте URL NestJS сервера
-
-### Шаг 5: Обновление Bridge API
-Добавьте переменную окружения в Bridge API:
-- **NESTJS_API_URL**: URL вашего NestJS сервера (например: `https://idenself-server-xxxx.onrender.com`)
-
----
-
 ## Часть 2: Настройка основного сервера
 
 ### Шаг 1: Подключение к серверу
@@ -115,7 +74,6 @@ nano .env
 Добавьте в файл:
 ```env
 BRIDGE_API_URL=https://your-bridge-url.onrender.com
-NESTJS_API_URL=https://your-server-url.onrender.com
 ```
 
 **Важно:** Замените `https://your-bridge-url.onrender.com` на реальный URL вашего Bridge API из Render.com!

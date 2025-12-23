@@ -56,7 +56,7 @@ export const VariantSelectionPage: React.FC = () => {
 
   if (loading) return <div className="text-center py-20 text-white text-xl">Генерирую варианты...</div>;
 
-  if (error || !variants || !Array.isArray(variants) || variants.length === 0) {
+  if (error || variants.length === 0) {
     return (
       <div className="max-w-3xl mx-auto py-12">
         <button 
