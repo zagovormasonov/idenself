@@ -24,14 +24,25 @@ export const ProfilePage: React.FC = () => {
 
   useEffect(() => {
     const fetchSessions = async () => {
+      // Проверяем наличие токена перед запросом
+      const token = localStorage.getItem('token');
+      if (!token || !user) {
+        navigate('/login');
+        return;
+      }
+
       try {
         const response = await axios.get('/api/survey/user/completed');
         setSessions(response.data);
       } catch (error: any) {
         console.error('Не удалось загрузить сессии', error);
+        // 401 ошибка обрабатывается в AuthContext interceptor
         if (error.response?.status === 401) {
-          navigate('/login');
+          // Interceptor уже обработает это, просто ждем
+          return;
         }
+        // Для других ошибок показываем сообщение
+        alert('Не удалось загрузить данные. Попробуйте обновить страницу.');
       } finally {
         setLoading(false);
       }
@@ -40,7 +51,11 @@ export const ProfilePage: React.FC = () => {
     if (user) {
       fetchSessions();
     } else {
-      navigate('/login');
+      // Если нет пользователя, но есть токен - ждем загрузки
+      const token = localStorage.getItem('token');
+      if (!token) {
+        navigate('/login');
+      }
     }
   }, [user, navigate]);
 

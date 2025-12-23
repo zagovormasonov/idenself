@@ -37,7 +37,7 @@ export const Layout: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-navy-dark via-navy to-navy-light">
-      <header className="bg-navy/50 backdrop-blur-sm border-b border-white/10 p-4 flex justify-between items-center z-50 relative" ref={menuRef}>
+      <header className="sticky top-0 bg-navy/50 backdrop-blur-sm border-b border-white/10 p-4 flex justify-between items-center z-50" ref={menuRef}>
         <Link to="/" className="text-2xl font-bold text-white tracking-tight" onClick={closeMobileMenu}>IdenSelf</Link>
         
         {/* Desktop Navigation */}

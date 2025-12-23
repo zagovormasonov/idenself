@@ -19,14 +19,55 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const logout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    delete axios.defaults.headers.common['Authorization'];
+    setUser(null);
+  };
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     const storedUser = localStorage.getItem('user');
+    
     if (token && storedUser) {
-      setUser(JSON.parse(storedUser));
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        
+        // Проверяем валидность токена, делая тестовый запрос
+        // Если токен невалиден, interceptor обработает это
+        setUser(parsedUser);
+      } catch (error) {
+        console.error('Ошибка при загрузке пользователя:', error);
+        logout();
+      }
     }
+    
     setIsLoading(false);
+  }, []);
+
+  // Interceptor для обработки 401 ошибок
+  useEffect(() => {
+    const interceptor = axios.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response?.status === 401) {
+          // Токен истек или невалиден
+          console.log('Токен невалиден, выход из системы');
+          logout();
+          // Перенаправляем на страницу логина только если мы не на ней
+          if (window.location.pathname !== '/login' && window.location.pathname !== '/register') {
+            window.location.href = '/login';
+          }
+        }
+        return Promise.reject(error);
+      }
+    );
+
+    return () => {
+      axios.interceptors.response.eject(interceptor);
+    };
   }, []);
 
   const login = (token: string, user: User) => {
@@ -34,13 +75,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem('user', JSON.stringify(user));
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     setUser(user);
-  };
-
-  const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    delete axios.defaults.headers.common['Authorization'];
-    setUser(null);
   };
 
   return (
