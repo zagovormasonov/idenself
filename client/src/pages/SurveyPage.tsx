@@ -105,6 +105,26 @@ export const SurveyPage: React.FC = () => {
 
   if (loading) return <div className="text-center py-20 text-white text-xl">Загрузка...</div>;
 
+  // Если нет вопросов, но loading завершен, значит что-то пошло не так
+  if (!questions || questions.length === 0) {
+    return (
+      <div className="max-w-3xl mx-auto py-12">
+        <button 
+          onClick={() => navigate(-1)} 
+          className="flex items-center text-white/60 hover:text-white mb-6 transition-colors group"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          Назад
+        </button>
+        <div className="bg-yellow-500/20 border border-yellow-500/50 rounded-2xl p-6 text-center">
+          <p className="text-white text-lg mb-4">Вопросы не загружены. Перенаправляем на выбор симптомов...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-3xl mx-auto py-12">
       <button 
@@ -124,7 +144,7 @@ export const SurveyPage: React.FC = () => {
       </div>
       
       <div className="space-y-6">
-        {questions && Array.isArray(questions) && questions.length > 0 ? questions.map((q: any) => (
+        {questions.map((q: any) => (
           <div key={q.id} className="bg-white/5 backdrop-blur-sm p-6 rounded-2xl border border-white/10">
             <label className="block text-lg font-medium text-white mb-4">{q.text}</label>
             
@@ -174,11 +194,7 @@ export const SurveyPage: React.FC = () => {
                  </div>
             )}
           </div>
-        )) : (
-          <div className="text-center py-12 text-white/60">
-            Вопросы загружаются...
-          </div>
-        )}
+        ))}
       </div>
 
       <div className="mt-12 flex justify-between items-center">
