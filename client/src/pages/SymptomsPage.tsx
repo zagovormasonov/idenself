@@ -22,6 +22,7 @@ export const SymptomsPage: React.FC = () => {
   const [generalDescription, setGeneralDescription] = useState('');
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string>('');
 
   useEffect(() => {
     const fetchSymptoms = async () => {
@@ -29,12 +30,34 @@ export const SymptomsPage: React.FC = () => {
         const response = await axios.get(`/api/survey/${id}`);
         const session = response.data;
         
+        // Проверяем статус - если не SYMPTOMS_PENDING, значит уже прошли этот этап
+        if (session.status && session.status !== 'SYMPTOMS_PENDING') {
+          // Перенаправляем на соответствующий этап
+          if (session.status === 'PART1_STARTED' || session.status === 'PART2_STARTED' || session.status === 'PART3_STARTED') {
+            navigate(`/survey/${id}`);
+            return;
+          }
+          if (session.status === 'FINISHED') {
+            navigate(`/results/${id}`);
+            return;
+          }
+        }
+        
         if (session.symptoms && Array.isArray(session.symptoms) && session.symptoms.length > 0) {
           setSymptoms(session.symptoms);
         } else {
           // Получаем список симптомов от Gemini
-          const symptomsResponse = await axios.get(`/api/survey/${id}/get-symptoms`);
-          setSymptoms(symptomsResponse.data.symptoms || []);
+          try {
+            const symptomsResponse = await axios.get(`/api/survey/${id}/get-symptoms`);
+            if (symptomsResponse.data.symptoms && Array.isArray(symptomsResponse.data.symptoms) && symptomsResponse.data.symptoms.length > 0) {
+              setSymptoms(symptomsResponse.data.symptoms);
+            } else {
+              setError('Не удалось загрузить список симптомов. Пожалуйста, обновите страницу.');
+            }
+          } catch (err) {
+            console.error('Ошибка при получении симптомов:', err);
+            setError('Не удалось загрузить список симптомов. Пожалуйста, обновите страницу.');
+          }
         }
 
         // Загружаем сохраненные данные (выбранные симптомы хранятся в session.symptoms как JSON)
@@ -46,14 +69,15 @@ export const SymptomsPage: React.FC = () => {
         if (session.complaint) {
           setGeneralDescription(session.complaint);
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('Не удалось загрузить симптомы', error);
+        setError(error.response?.data?.message || 'Не удалось загрузить данные. Пожалуйста, обновите страницу.');
       } finally {
         setLoading(false);
       }
     };
     fetchSymptoms();
-  }, [id]);
+  }, [id, navigate]);
 
   const handleSymptomClick = (symptomId: string) => {
     if (!selectedSymptoms[symptomId]) {

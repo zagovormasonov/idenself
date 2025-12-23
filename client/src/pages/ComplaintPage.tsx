@@ -10,9 +10,14 @@ export const ComplaintPage: React.FC = () => {
     setLoading(true);
     try {
       const response = await axios.post('/api/survey/start');
-      navigate(`/symptoms/${response.data.sessionId}`);
-    } catch (error) {
+      if (response.data && response.data.sessionId) {
+        navigate(`/symptoms/${response.data.sessionId}`);
+      } else {
+        alert('Ошибка: не получен ID сессии. Попробуйте еще раз.');
+      }
+    } catch (error: any) {
       console.error('Не удалось начать опрос', error);
+      alert(error.response?.data?.message || 'Не удалось начать опрос. Попробуйте еще раз.');
     } finally {
       setLoading(false);
     }

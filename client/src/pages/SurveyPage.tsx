@@ -43,8 +43,18 @@ export const SurveyPage: React.FC = () => {
           // No questions available, redirect to symptoms
           navigate(`/symptoms/${id}`);
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('Не удалось загрузить сессию', error);
+        // Если ошибка авторизации, перенаправляем на логин
+        if (error.response?.status === 401) {
+          navigate('/login');
+          return;
+        }
+        // Если сессия не найдена, перенаправляем на начало
+        if (error.response?.status === 404) {
+          navigate('/complaint');
+          return;
+        }
       } finally {
         setLoading(false);
       }
