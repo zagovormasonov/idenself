@@ -32,15 +32,22 @@ export const SurveyPage: React.FC = () => {
         }
 
         if (lastQ && lastQ.questions) {
-            setQuestions(lastQ.questions);
-            const partMap: Record<string, string> = {
-              'PART1': 'Этап 1',
-              'PART2': 'Этап 2',
-              'PART3': 'Этап 3'
-            };
-            setPart(partMap[lastQ.type] || lastQ.type);
+            console.log('Loaded questions:', lastQ.questions);
+            if (Array.isArray(lastQ.questions)) {
+              setQuestions(lastQ.questions);
+              const partMap: Record<string, string> = {
+                'PART1': 'Этап 1',
+                'PART2': 'Этап 2',
+                'PART3': 'Этап 3'
+              };
+              setPart(partMap[lastQ.type] || lastQ.type);
+            } else {
+              console.error('Questions is not an array:', lastQ.questions);
+              navigate(`/symptoms/${id}`);
+            }
         } else {
           // No questions available, redirect to symptoms
+          console.log('No questions available, redirecting to symptoms');
           navigate(`/symptoms/${id}`);
         }
       } catch (error: any) {
@@ -92,14 +99,19 @@ export const SurveyPage: React.FC = () => {
       if (response.data.nextStep === 'FINISHED') {
         navigate(`/results/${id}`);
       } else {
-        setQuestions(response.data.questions);
-        setAnswers({});
-        const partMap: Record<string, string> = {
-          'PART2': 'Этап 2',
-          'PART3': 'Этап 3'
-        };
-        setPart(partMap[response.data.nextStep] || response.data.nextStep);
-        window.scrollTo(0, 0);
+        if (response.data.questions && Array.isArray(response.data.questions)) {
+          setQuestions(response.data.questions);
+          setAnswers({});
+          const partMap: Record<string, string> = {
+            'PART2': 'Этап 2',
+            'PART3': 'Этап 3'
+          };
+          setPart(partMap[response.data.nextStep] || response.data.nextStep);
+          window.scrollTo(0, 0);
+        } else {
+          console.error('Invalid questions data received:', response.data);
+          alert('Получены некорректные данные вопросов. Попробуйте еще раз.');
+        }
       }
     } catch (error) {
       console.error('Не удалось отправить ответы', error);

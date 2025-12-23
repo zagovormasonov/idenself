@@ -189,6 +189,12 @@ ${generalDescription || 'Не указано'}
 
     try {
       const parsedResponse = JSON.parse(text);
+      // Validate response structure
+      if (!parsedResponse.questions || !Array.isArray(parsedResponse.questions)) {
+        console.error('Invalid response structure, missing questions array:', parsedResponse);
+        res.status(500).json({ error: 'Invalid AI response structure', details: 'Missing or invalid questions array' });
+        return;
+      }
       res.json(parsedResponse);
     } catch (parseError) {
       console.error('Failed to parse Gemini response:', text);
