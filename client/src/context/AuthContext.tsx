@@ -55,7 +55,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (error.response?.status === 401) {
           // Токен истек или невалиден
           console.log('Токен невалиден, выход из системы');
-          logout();
+          // Очищаем данные
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          delete axios.defaults.headers.common['Authorization'];
+          setUser(null);
           // Перенаправляем на страницу логина только если мы не на ней
           if (window.location.pathname !== '/login' && window.location.pathname !== '/register') {
             window.location.href = '/login';
