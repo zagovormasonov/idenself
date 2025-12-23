@@ -68,6 +68,11 @@ export const SurveyPage: React.FC = () => {
 
   const handleSubmit = async () => {
     // Validate that all questions are answered
+    if (!questions || !Array.isArray(questions) || questions.length === 0) {
+      alert('Вопросы не загружены. Попробуйте обновить страницу.');
+      return;
+    }
+
     const unansweredQuestions = questions.filter((q: any) => {
       const answer = answers[q.id];
       if (q.type === 'text') {
